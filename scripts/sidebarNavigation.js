@@ -1,57 +1,76 @@
-window.addEventListener('load', () => {
-  const sections = document.querySelectorAll('.section');
-
-  const content = document.querySelector('.main');
-
-  let spinValue = 0;
-
-  let canScroll = true;
-
-  let sectionNavigation = '';
-
-  document.body.insertAdjacentHTML('beforeEnd', '<div class="sidebar-nav"></div>');
-
-  for (let i = 0; i < sections.length; i += 1) {
-    sectionNavigation
-      += `<div class="sidebar-nav__button"><span class="sidebar-nav__item">
-        ${sections[i].dataset.target}
-        </span></div>`;
+class MyFullPage {
+  constructor() {
+    this.sections = document.querySelectorAll('.section');
+    this.content = document.querySelector('.main');
+    this.spinValue = 0;
+    this.canScroll = true;
+    this.sectionNavigation = '';
   }
 
-  function scrollContent(count) {
-    content.setAttribute('style', `transform: translateY(-${count * 100}vh)`);
+  scrollContent(count) {
+    this.content.setAttribute('style', `transform: translateY(-${count * 100}vh)`);
+
+    document.querySelector('.sidebar-nav__button_is-active')
+      .classList.remove('sidebar-nav__button_is-active');
+
+    this.buttons[count].classList.add('sidebar-nav__button_is-active');
   }
 
-  document.querySelector('.sidebar-nav').innerHTML = sectionNavigation;
+  setScroll() {
+    window.addEventListener('mousewheel', (event) => {
+      if (this.canScroll) {
+        this.canScroll = false;
 
-  const buttons = document.querySelectorAll('.sidebar-nav__button');
+        if (event.deltaY > 0) {
+          this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+        } else {
+          this.spinValue -= this.spinValue > 0 ? 1 : 0;
+        }
 
-  buttons[0].classList.add('sidebar-nav__button_is-active');
+        this.scrollContent(this.spinValue);
+      }
 
-  for (let i = 0; i < buttons.length; i += 1) {
-    buttons[i].addEventListener('click', () => {
-      document.querySelector('.sidebar-nav__button_is-active')
-        .classList.remove('.sidebar-nav__button_is-active');
-      this.classList.add('sidebar-nav__button_is-active');
-      scrollContent(i);
+      setTimeout(() => {
+        this.canScroll = true;
+      }, 500);
     });
   }
 
-  window.addEventListener('mousewheel', (event) => {
-    if (canScroll) {
-      canScroll = false;
+  setNavigation() {
+    document.body.insertAdjacentHTML('beforeEnd', '<div class="sidebar-nav"></div>');
 
-      if (event.deltaY > 0) {
-        spinValue += spinValue < sections.length - 1 ? 1 : 0;
-      } else {
-        spinValue -= spinValue > 0 ? 1 : 0;
-      }
-
-      scrollContent(spinValue);
+    for (let i = 0; i < this.sections.length; i += 1) {
+      this.sectionNavigation
+        += `<div class="sidebar-nav__button"><span class="sidebar-nav__item">
+        ${this.sections[i].dataset.target}
+        </span></div>`;
     }
 
-    setTimeout(() => {
-      canScroll = true;
-    }, 500);
-  });
-});
+    document.querySelector('.sidebar-nav').innerHTML = this.sectionNavigation;
+
+    this.buttons = document.querySelectorAll('.sidebar-nav__button');
+
+    this.buttons[0].classList.add('sidebar-nav__button_is-active');
+
+    for (let i = 0; i < this.buttons.length; i += 1) {
+      this.buttons[i].addEventListener('click', () => {
+        document.querySelector('.sidebar-nav__button_is-active')
+          .classList.remove('sidebar-nav__button_is-active');
+
+        this.buttons[i].classList.add('sidebar-nav__button_is-active');
+
+        this.spinValue = i;
+
+        this.scrollContent(this.spinValue);
+      });
+    }
+  }
+
+  showInfo() {
+    console.log(this.spinValue);
+  }
+}
+
+const newNavigation = new MyFullPage();
+newNavigation.setScroll();
+newNavigation.setNavigation();
