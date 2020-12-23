@@ -26,6 +26,24 @@ class MyFullPage {
     this.setScroll();
   }
 
+  scrollContent() {
+    if (this.onStartRunFunc) {
+      this.onStartRunFunc();
+    }
+
+    this.content.style.transform = `translateY(-${this.spinValue * VIEWPORT_HEIGHT}vh)`;
+
+    FUNC.removeActiveClass();
+
+    this.buttons[this.spinValue].classList.add(CLASSES.sidebarNavButtonActive);
+
+    if (this.onEndRunFunc) {
+      setTimeout(() => {
+        this.onEndRunFunc();
+      }, ANIMATION_DELAY * MS_COEFFICIENT);
+    }
+  }
+
   setScroll() {
     window.addEventListener('mousewheel', (event) => {
       if (this.canScroll) {
@@ -44,24 +62,6 @@ class MyFullPage {
         this.canScroll = true;
       }, ANIMATION_DELAY * MS_COEFFICIENT);
     });
-  }
-
-  scrollContent() {
-    if (this.onStartRunFunc) {
-      this.onStartRunFunc();
-    }
-
-    this.content.style.transform = `translateY(-${this.spinValue * VIEWPORT_HEIGHT}vh)`;
-
-    FUNC.removeActiveClass();
-
-    this.buttons[this.spinValue].classList.add(CLASSES.sidebarNavButtonActive);
-
-    if (this.onEndRunFunc) {
-      setTimeout(() => {
-        this.onEndRunFunc();
-      }, ANIMATION_DELAY * MS_COEFFICIENT);
-    }
   }
 
   setAnimationDuration(duration = ANIMATION_DELAY) {

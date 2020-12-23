@@ -196,32 +196,9 @@ var MyFullPage = /*#__PURE__*/function () {
   }
 
   _createClass(MyFullPage, [{
-    key: "setScroll",
-    value: function setScroll() {
-      var _this = this;
-
-      window.addEventListener('mousewheel', function (event) {
-        if (_this.canScroll) {
-          _this.canScroll = false;
-
-          if (event.deltaY > 0) {
-            _this.spinValue += _this.spinValue < _this.sections.length - 1 ? 1 : 0;
-          } else {
-            _this.spinValue -= _this.spinValue > 0 ? 1 : 0;
-          }
-
-          _this.scrollContent();
-        }
-
-        setTimeout(function () {
-          _this.canScroll = true;
-        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
-      });
-    }
-  }, {
     key: "scrollContent",
     value: function scrollContent() {
-      var _this2 = this;
+      var _this = this;
 
       if (this.onStartRunFunc) {
         this.onStartRunFunc();
@@ -235,9 +212,32 @@ var MyFullPage = /*#__PURE__*/function () {
 
       if (this.onEndRunFunc) {
         setTimeout(function () {
-          _this2.onEndRunFunc();
+          _this.onEndRunFunc();
         }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
       }
+    }
+  }, {
+    key: "setScroll",
+    value: function setScroll() {
+      var _this2 = this;
+
+      window.addEventListener('mousewheel', function (event) {
+        if (_this2.canScroll) {
+          _this2.canScroll = false;
+
+          if (event.deltaY > 0) {
+            _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
+          } else {
+            _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
+          }
+
+          _this2.scrollContent();
+        }
+
+        setTimeout(function () {
+          _this2.canScroll = true;
+        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
+      });
     }
   }, {
     key: "setAnimationDuration",

@@ -5,4 +5,5 @@ module.exports = {
     node: true,
     jasmine: true,
   },
+  experimentalDecorators: true,
 };

@@ -7,7 +7,6 @@
   "dependencies": {},
   "type": "module",
   "devDependencies": {
-    "@babel/core": "^7.12.10",
     "@babel/node": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@linthtml/linthtml": "^0.5.2",
