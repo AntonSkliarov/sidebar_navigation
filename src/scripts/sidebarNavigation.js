@@ -1,4 +1,5 @@
 import { CLASSES, DOM } from '../helpers/_consts';
+import FUNC from '../helpers/_functions';
 
 class MyFullPage {
   constructor() {
@@ -118,18 +119,10 @@ class MyFullPage {
   }
 }
 
-const runAtEnd = () => {
-  console.log('I run at the end');
-};
-
-const runAtStart = () => {
-  console.log('I run at the start');
-};
-
 const newNavigation = new MyFullPage();
 newNavigation.setScroll();
 newNavigation.setNavigation();
 newNavigation.setAnimationDuration(1);
-newNavigation.setFuncOnPoint('end', runAtEnd);
-newNavigation.setFuncOnPoint('start', runAtStart);
+newNavigation.setFuncOnPoint('end', FUNC.runAtEnd);
+newNavigation.setFuncOnPoint('start', FUNC.runAtStart);
 // newNavigation.goTo(1);

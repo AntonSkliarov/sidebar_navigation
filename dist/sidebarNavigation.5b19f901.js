@@ -137,10 +137,31 @@ var DOM = {
   sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
 };
 exports.DOM = DOM;
+},{}],"helpers/_functions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var FUNC = {
+  runAtEnd: function runAtEnd() {
+    console.log('I run at the end');
+  },
+  runAtStart: function runAtStart() {
+    console.log('I run at the start');
+  }
+};
+var _default = FUNC;
+exports.default = _default;
 },{}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
 "use strict";
 
 var _consts = require("../helpers/_consts");
+
+var _functions = _interopRequireDefault(require("../helpers/_functions"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -261,21 +282,13 @@ var MyFullPage = /*#__PURE__*/function () {
   return MyFullPage;
 }();
 
-var runAtEnd = function runAtEnd() {
-  console.log('I run at the end');
-};
-
-var runAtStart = function runAtStart() {
-  console.log('I run at the start');
-};
-
 var newNavigation = new MyFullPage();
 newNavigation.setScroll();
 newNavigation.setNavigation();
 newNavigation.setAnimationDuration(1);
-newNavigation.setFuncOnPoint('end', runAtEnd);
-newNavigation.setFuncOnPoint('start', runAtStart); // newNavigation.goTo(1);
-},{"../helpers/_consts":"helpers/_consts.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+newNavigation.setFuncOnPoint('end', _functions.default.runAtEnd);
+newNavigation.setFuncOnPoint('start', _functions.default.runAtStart); // newNavigation.goTo(1);
+},{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
