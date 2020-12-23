@@ -1,4 +1,10 @@
-import { CLASSES, DOM } from '../helpers/_consts';
+import {
+  CLASSES,
+  DOM,
+  VIEWPORT_HEIGHT,
+  ANIMATION_DELAY,
+  MS_COEFFICIENT,
+} from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
 class MyFullPage {
@@ -36,7 +42,7 @@ class MyFullPage {
 
       setTimeout(() => {
         this.canScroll = true;
-      }, 1000);
+      }, ANIMATION_DELAY * MS_COEFFICIENT);
     });
   }
 
@@ -45,22 +51,20 @@ class MyFullPage {
       this.onStartRunFunc();
     }
 
-    this.content.style.transform = `translateY(-${this.spinValue * 100}vh)`;
+    this.content.style.transform = `translateY(-${this.spinValue * VIEWPORT_HEIGHT}vh)`;
 
-    document
-      .querySelector(`.${CLASSES.sidebarNavButtonActive}`)
-      .classList.remove(CLASSES.sidebarNavButtonActive);
+    FUNC.removeActiveClass();
 
     this.buttons[this.spinValue].classList.add(CLASSES.sidebarNavButtonActive);
 
     if (this.onEndRunFunc) {
       setTimeout(() => {
         this.onEndRunFunc();
-      }, 1000);
+      }, ANIMATION_DELAY * MS_COEFFICIENT);
     }
   }
 
-  setAnimationDuration(duration) {
+  setAnimationDuration(duration = ANIMATION_DELAY) {
     if (duration) {
       this.content.style.transition = `transform ${duration}s ease-out`;
     }
@@ -70,7 +74,6 @@ class MyFullPage {
     document.body.insertAdjacentHTML('beforeEnd', DOM.sidebarNav);
 
     this.sections.forEach((section) => {
-      // console.log(section.getBoundingClientRect());
       this.sectionNavigation += `
         <div class="${CLASSES.sidebarNavButton}">
           <span class="${CLASSES.sidebarNavItem}">
@@ -83,14 +86,11 @@ class MyFullPage {
     document.querySelector(`.${CLASSES.sidebarNav}`).innerHTML = this.sectionNavigation;
 
     this.buttons = document.querySelectorAll(`.${CLASSES.sidebarNavButton}`);
-
     this.buttons[0].classList.add(CLASSES.sidebarNavButtonActive);
 
     this.buttons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        document
-          .querySelector(`.${CLASSES.sidebarNavButtonActive}`)
-          .classList.remove(CLASSES.sidebarNavButtonActive);
+        FUNC.removeActiveClass();
 
         button.classList.add(CLASSES.sidebarNavButtonActive);
 
@@ -123,7 +123,9 @@ class MyFullPage {
 
 const newNavigation = new MyFullPage();
 newNavigation.setNavigation();
-newNavigation.setAnimationDuration(1);
+newNavigation.setAnimationDuration(); // Duration is set by seconds, not milliseconds
+// 0.5 will add duration for half of a second
+
 newNavigation.setFuncOnPoint('end', FUNC.runAtEnd);
 newNavigation.setFuncOnPoint('start', FUNC.runAtStart);
 newNavigation.goTo(0);

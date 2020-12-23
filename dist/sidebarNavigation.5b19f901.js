@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DOM = exports.CLASSES = void 0;
+exports.MS_COEFFICIENT = exports.ANIMATION_DELAY = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
 var CLASSES = {
   sidebarNav: 'sidebar-nav',
   sidebarNavButton: 'sidebar-nav__button',
@@ -137,6 +137,12 @@ var DOM = {
   sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
 };
 exports.DOM = DOM;
+var VIEWPORT_HEIGHT = 100;
+exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
+var ANIMATION_DELAY = 1;
+exports.ANIMATION_DELAY = ANIMATION_DELAY;
+var MS_COEFFICIENT = 1000;
+exports.MS_COEFFICIENT = MS_COEFFICIENT;
 },{}],"helpers/_functions.js":[function(require,module,exports) {
 "use strict";
 
@@ -144,17 +150,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+var _consts = require("./_consts");
+
 var FUNC = {
   runAtEnd: function runAtEnd() {
     console.log('I run at the end');
   },
   runAtStart: function runAtStart() {
     console.log('I run at the start');
+  },
+  removeActiveClass: function removeActiveClass() {
+    document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
   }
 };
 var _default = FUNC;
 exports.default = _default;
-},{}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
+},{"./_consts":"helpers/_consts.js"}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
 "use strict";
 
 var _consts = require("../helpers/_consts");
@@ -203,7 +215,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
         setTimeout(function () {
           _this.canScroll = true;
-        }, 1000);
+        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
       });
     }
   }, {
@@ -215,19 +227,23 @@ var MyFullPage = /*#__PURE__*/function () {
         this.onStartRunFunc();
       }
 
-      this.content.style.transform = "translateY(-".concat(this.spinValue * 100, "vh)");
-      document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+      this.content.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
+
+      _functions.default.removeActiveClass();
+
       this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
 
       if (this.onEndRunFunc) {
         setTimeout(function () {
           _this2.onEndRunFunc();
-        }, 1000);
+        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
       }
     }
   }, {
     key: "setAnimationDuration",
-    value: function setAnimationDuration(duration) {
+    value: function setAnimationDuration() {
+      var duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _consts.ANIMATION_DELAY;
+
       if (duration) {
         this.content.style.transition = "transform ".concat(duration, "s ease-out");
       }
@@ -239,7 +255,6 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        // console.log(section.getBoundingClientRect());
         _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
@@ -247,7 +262,8 @@ var MyFullPage = /*#__PURE__*/function () {
       this.buttons[0].classList.add(_consts.CLASSES.sidebarNavButtonActive);
       this.buttons.forEach(function (button, index) {
         button.addEventListener('click', function () {
-          document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+          _functions.default.removeActiveClass();
+
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
           _this3.spinValue = index;
 
@@ -285,7 +301,9 @@ var MyFullPage = /*#__PURE__*/function () {
 
 var newNavigation = new MyFullPage();
 newNavigation.setNavigation();
-newNavigation.setAnimationDuration(1);
+newNavigation.setAnimationDuration(); // Duration is set by seconds, not milliseconds
+// 0.5 will add duration for half of a second
+
 newNavigation.setFuncOnPoint('end', _functions.default.runAtEnd);
 newNavigation.setFuncOnPoint('start', _functions.default.runAtStart);
 newNavigation.goTo(0);
