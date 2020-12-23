@@ -1,13 +1,19 @@
-import { CLASSES } from '../helpers/_consts';
+import { CLASSES, DOM } from '../helpers/_consts';
 
 class MyFullPage {
   constructor() {
-    this.sections = document.querySelectorAll('.section');
-    this.content = document.querySelector('.main-content');
+    this.sections = DOM.sections;
+
+    this.content = DOM.content;
+
     this.spinValue = 0;
+
     this.canScroll = true;
+
     this.sectionNavigation = '';
+
     this.onEndRunFunc = null;
+
     this.onStartRunFunc = null;
   }
 
@@ -39,10 +45,10 @@ class MyFullPage {
     this.content.style.transform = `translateY(-${this.spinValue * 100}vh)`;
 
     document
-      .querySelector(CLASSES.navButtonActive)
-      .classList.remove('sidebar-nav__button_is-active');
+      .querySelector(`.${CLASSES.sidebarNavButtonActive}`)
+      .classList.remove(CLASSES.sidebarNavButtonActive);
 
-    this.buttons[this.spinValue].classList.add('sidebar-nav__button_is-active');
+    this.buttons[this.spinValue].classList.add(CLASSES.sidebarNavButtonActive);
 
     if (this.onEndRunFunc) {
       setTimeout(() => {
@@ -58,33 +64,36 @@ class MyFullPage {
   }
 
   setNavigation() {
-    document.body.insertAdjacentHTML('beforeEnd', '<div class="sidebar-nav"></div>');
+    document.body.insertAdjacentHTML('beforeEnd', DOM.sidebarNav);
 
     this.sections.forEach((section) => {
-      console.log(section.getBoundingClientRect());
-      this.sectionNavigation
-        += `<div class="sidebar-nav__button"><span class="sidebar-nav__item">
+      // console.log(section.getBoundingClientRect());
+      this.sectionNavigation += `
+        <div class="${CLASSES.sidebarNavButton}">
+          <span class="${CLASSES.sidebarNavItem}">
           ${section.dataset.target}
-          </span></div>`;
+          </span>
+        </div>
+      `;
     });
 
-    document.querySelector('.sidebar-nav').innerHTML = this.sectionNavigation;
+    document.querySelector(`.${CLASSES.sidebarNav}`).innerHTML = this.sectionNavigation;
 
-    this.buttons = document.querySelectorAll('.sidebar-nav__button');
+    this.buttons = document.querySelectorAll(`.${CLASSES.sidebarNavButton}`);
 
-    this.buttons[0].classList.add('sidebar-nav__button_is-active');
+    this.buttons[0].classList.add(CLASSES.sidebarNavButtonActive);
 
     this.buttons.forEach((button, index) => {
       button.addEventListener('click', () => {
         document
-          .querySelector(CLASSES.navButtonActive)
-          .classList.remove('sidebar-nav__button_is-active');
+          .querySelector(`.${CLASSES.sidebarNavButtonActive}`)
+          .classList.remove(CLASSES.sidebarNavButtonActive);
 
-        button.classList.add('sidebar-nav__button_is-active');
+        button.classList.add(CLASSES.sidebarNavButtonActive);
 
         this.spinValue = index;
 
-        this.scrollContent(this.spinValue);
+        this.scrollContent();
       });
     });
   }
