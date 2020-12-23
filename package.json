@@ -1,5 +1,5 @@
 {
-  
+  "homepage": "https://antonskliarov.github.io/sidebar_navigation/",
   "name": "sidebar_navigation",
   "version": "1.0.0",
   "description": "",
@@ -32,6 +32,5 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/AntonSkliarov/sidebar_navigation/issues"
-  },
-  "homepage": "https://antonskliarov.github.io/sidebar_navigation/"
+  }
 }
