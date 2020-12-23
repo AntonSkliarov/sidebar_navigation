@@ -16,6 +16,8 @@ class MyFullPage {
     this.onEndRunFunc = null;
 
     this.onStartRunFunc = null;
+
+    this.setScroll();
   }
 
   setScroll() {
@@ -120,9 +122,8 @@ class MyFullPage {
 }
 
 const newNavigation = new MyFullPage();
-newNavigation.setScroll();
 newNavigation.setNavigation();
 newNavigation.setAnimationDuration(1);
 newNavigation.setFuncOnPoint('end', FUNC.runAtEnd);
 newNavigation.setFuncOnPoint('start', FUNC.runAtStart);
-// newNavigation.goTo(1);
+newNavigation.goTo(0);

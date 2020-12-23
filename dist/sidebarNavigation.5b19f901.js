@@ -180,6 +180,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sectionNavigation = '';
     this.onEndRunFunc = null;
     this.onStartRunFunc = null;
+    this.setScroll();
   }
 
   _createClass(MyFullPage, [{
@@ -283,11 +284,11 @@ var MyFullPage = /*#__PURE__*/function () {
 }();
 
 var newNavigation = new MyFullPage();
-newNavigation.setScroll();
 newNavigation.setNavigation();
 newNavigation.setAnimationDuration(1);
 newNavigation.setFuncOnPoint('end', _functions.default.runAtEnd);
-newNavigation.setFuncOnPoint('start', _functions.default.runAtStart); // newNavigation.goTo(1);
+newNavigation.setFuncOnPoint('start', _functions.default.runAtStart);
+newNavigation.goTo(0);
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -316,7 +317,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60719" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64326" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
