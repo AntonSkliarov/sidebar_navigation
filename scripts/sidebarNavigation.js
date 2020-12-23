@@ -1,19 +1,37 @@
 class MyFullPage {
   constructor() {
     this.sections = document.querySelectorAll('.section');
-    this.content = document.querySelector('.main');
+    this.content = document.querySelector('.main-content');
     this.spinValue = 0;
     this.canScroll = true;
     this.sectionNavigation = '';
+    this.onEndRunFunc = null;
+    this.onStartRunFunc = null;
   }
 
   scrollContent(count) {
-    this.content.setAttribute('style', `transform: translateY(-${count * 100}vh)`);
+    if (this.onStartRunFunc) {
+      this.onStartRunFunc();
+    }
+
+    this.content.style.transform = `translateY(-${count * 100}vh)`;
 
     document.querySelector('.sidebar-nav__button_is-active')
       .classList.remove('sidebar-nav__button_is-active');
 
     this.buttons[count].classList.add('sidebar-nav__button_is-active');
+
+    if (this.onEndRunFunc) {
+      setTimeout(() => {
+        this.onEndRunFunc();
+      }, 1000);
+    }
+  }
+
+  setAnimationDuration(duration) {
+    if (duration) {
+      this.content.style.transition = `transform ${duration}s ease-out`;
+    }
   }
 
   setScroll() {
@@ -66,11 +84,30 @@ class MyFullPage {
     }
   }
 
-  showInfo() {
-    console.log(this.spinValue);
+  setFuncOnPoint(point, func) {
+    switch (point) {
+      case 'end':
+        this.onEndRunFunc = func;
+        break;
+      case 'start':
+        this.onStartRunFunc = func;
+        break;
+      default:
+        this.onEndRunFunc = null;
+        this.onStartRunFunc = null;
+    }
   }
 }
+const runAtEnd = () => {
+  console.log('Look, I\'m running at the end');
+};
+const runAtStart = () => {
+  console.log('Look, I\'m running at the start');
+};
 
 const newNavigation = new MyFullPage();
 newNavigation.setScroll();
 newNavigation.setNavigation();
+newNavigation.setAnimationDuration(1);
+newNavigation.setFuncOnPoint('end', runAtEnd);
+newNavigation.setFuncOnPoint('start', runAtStart);
