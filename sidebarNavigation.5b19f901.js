@@ -125,10 +125,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DOM = exports.CLASSES = void 0;
 var CLASSES = {
-  navButtonActive: '.sidebar-nav__button_is-active'
+  sidebarNav: 'sidebar-nav',
+  sidebarNavButton: 'sidebar-nav__button',
+  sidebarNavButtonActive: 'sidebar-nav__button_is-active',
+  sidebarNavItem: 'sidebar-nav__item'
 };
 exports.CLASSES = CLASSES;
-var DOM = {};
+var DOM = {
+  content: document.querySelector('.main-content'),
+  sections: document.querySelectorAll('.section'),
+  sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
+};
 exports.DOM = DOM;
 },{}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
 "use strict";
@@ -145,8 +152,8 @@ var MyFullPage = /*#__PURE__*/function () {
   function MyFullPage() {
     _classCallCheck(this, MyFullPage);
 
-    this.sections = document.querySelectorAll('.section');
-    this.content = document.querySelector('.main-content');
+    this.sections = _consts.DOM.sections;
+    this.content = _consts.DOM.content;
     this.spinValue = 0;
     this.canScroll = true;
     this.sectionNavigation = '';
@@ -187,8 +194,8 @@ var MyFullPage = /*#__PURE__*/function () {
       }
 
       this.content.style.transform = "translateY(-".concat(this.spinValue * 100, "vh)");
-      document.querySelector(_consts.CLASSES.navButtonActive).classList.remove('sidebar-nav__button_is-active');
-      this.buttons[this.spinValue].classList.add('sidebar-nav__button_is-active');
+      document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+      this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
 
       if (this.onEndRunFunc) {
         setTimeout(function () {
@@ -208,21 +215,21 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function setNavigation() {
       var _this3 = this;
 
-      document.body.insertAdjacentHTML('beforeEnd', '<div class="sidebar-nav"></div>');
+      document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        console.log(section.getBoundingClientRect());
-        _this3.sectionNavigation += "<div class=\"sidebar-nav__button\"><span class=\"sidebar-nav__item\">\n          ".concat(section.dataset.target, "\n          </span></div>");
+        // console.log(section.getBoundingClientRect());
+        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
-      document.querySelector('.sidebar-nav').innerHTML = this.sectionNavigation;
-      this.buttons = document.querySelectorAll('.sidebar-nav__button');
-      this.buttons[0].classList.add('sidebar-nav__button_is-active');
+      document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
+      this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
+      this.buttons[0].classList.add(_consts.CLASSES.sidebarNavButtonActive);
       this.buttons.forEach(function (button, index) {
         button.addEventListener('click', function () {
-          document.querySelector(_consts.CLASSES.navButtonActive).classList.remove('sidebar-nav__button_is-active');
-          button.classList.add('sidebar-nav__button_is-active');
+          document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+          button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
           _this3.spinValue = index;
 
-          _this3.scrollContent(_this3.spinValue);
+          _this3.scrollContent();
         });
       });
     }
@@ -268,7 +275,7 @@ newNavigation.setNavigation();
 newNavigation.setAnimationDuration(1);
 newNavigation.setFuncOnPoint('end', runAtEnd);
 newNavigation.setFuncOnPoint('start', runAtStart); // newNavigation.goTo(1);
-},{"../helpers/_consts":"helpers/_consts.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../helpers/_consts":"helpers/_consts.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -296,7 +303,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59024" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60719" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -472,5 +479,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/sidebarNavigation.js"], null)
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/sidebarNavigation.js"], null)
 //# sourceMappingURL=/sidebarNavigation.5b19f901.js.map
