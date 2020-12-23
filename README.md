@@ -7,6 +7,10 @@ For DEMO click [HERE](https://antonskliarov.github.io/sidebar_navigation/)
 
 
 *****
+#### To do
+
+  * add separate functions for events callbacks
+
 
 #### To fix
 

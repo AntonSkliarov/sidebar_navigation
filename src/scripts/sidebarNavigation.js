@@ -10,19 +10,12 @@ import FUNC from '../helpers/_functions';
 class MyFullPage {
   constructor() {
     this.sections = DOM.sections;
-
     this.content = DOM.content;
-
     this.spinValue = 0;
-
     this.canScroll = true;
-
     this.sectionNavigation = '';
-
     this.onEndRunFunc = null;
-
     this.onStartRunFunc = null;
-
     this.setScroll();
   }
 
@@ -87,7 +80,6 @@ class MyFullPage {
 
     this.buttons = document.querySelectorAll(`.${CLASSES.sidebarNavButton}`);
     this.buttons[0].classList.add(CLASSES.sidebarNavButtonActive);
-
     this.buttons.forEach((button, index) => {
       button.addEventListener('click', () => {
         FUNC.removeActiveClass();
@@ -95,7 +87,6 @@ class MyFullPage {
         button.classList.add(CLASSES.sidebarNavButtonActive);
 
         this.spinValue = index;
-
         this.scrollContent();
       });
     });
