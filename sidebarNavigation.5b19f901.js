@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DOM = exports.CLASSES = void 0;
+exports.MS_COEFFICIENT = exports.ANIMATION_DELAY = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
 var CLASSES = {
   sidebarNav: 'sidebar-nav',
   sidebarNavButton: 'sidebar-nav__button',
@@ -137,10 +137,43 @@ var DOM = {
   sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
 };
 exports.DOM = DOM;
-},{}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
+var VIEWPORT_HEIGHT = 100;
+exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
+var ANIMATION_DELAY = 1;
+exports.ANIMATION_DELAY = ANIMATION_DELAY;
+var MS_COEFFICIENT = 1000;
+exports.MS_COEFFICIENT = MS_COEFFICIENT;
+},{}],"helpers/_functions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _consts = require("./_consts");
+
+var FUNC = {
+  runAtEnd: function runAtEnd() {
+    console.log('I run at the end');
+  },
+  runAtStart: function runAtStart() {
+    console.log('I run at the start');
+  },
+  removeActiveClass: function removeActiveClass() {
+    document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+  }
+};
+var _default = FUNC;
+exports.default = _default;
+},{"./_consts":"helpers/_consts.js"}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
 "use strict";
 
 var _consts = require("../helpers/_consts");
+
+var _functions = _interopRequireDefault(require("../helpers/_functions"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -159,53 +192,58 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sectionNavigation = '';
     this.onEndRunFunc = null;
     this.onStartRunFunc = null;
+    this.setScroll();
   }
 
   _createClass(MyFullPage, [{
-    key: "setScroll",
-    value: function setScroll() {
-      var _this = this;
-
-      window.addEventListener('mousewheel', function (event) {
-        if (_this.canScroll) {
-          _this.canScroll = false;
-
-          if (event.deltaY > 0) {
-            _this.spinValue += _this.spinValue < _this.sections.length - 1 ? 1 : 0;
-          } else {
-            _this.spinValue -= _this.spinValue > 0 ? 1 : 0;
-          }
-
-          _this.scrollContent();
-        }
-
-        setTimeout(function () {
-          _this.canScroll = true;
-        }, 1000);
-      });
-    }
-  }, {
     key: "scrollContent",
     value: function scrollContent() {
-      var _this2 = this;
+      var _this = this;
 
       if (this.onStartRunFunc) {
         this.onStartRunFunc();
       }
 
-      this.content.style.transform = "translateY(-".concat(this.spinValue * 100, "vh)");
-      document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+      this.content.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
+
+      _functions.default.removeActiveClass();
+
       this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
 
       if (this.onEndRunFunc) {
         setTimeout(function () {
-          _this2.onEndRunFunc();
-        }, 1000);
+          _this.onEndRunFunc();
+        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
       }
     }
   }, {
+    key: "setScroll",
+    value: function setScroll() {
+      var _this2 = this;
+
+      window.addEventListener('mousewheel', function (event) {
+        if (_this2.canScroll) {
+          _this2.canScroll = false;
+
+          if (event.deltaY > 0) {
+            _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
+          } else {
+            _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
+          }
+
+          _this2.scrollContent();
+        }
+
+        setTimeout(function () {
+          _this2.canScroll = true;
+        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
+      });
+    }
+  }, {
     key: "setAnimationDuration",
-    value: function setAnimationDuration(duration) {
+    value: function setAnimationDuration() {
+      var duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _consts.ANIMATION_DELAY;
+
       if (duration) {
         this.content.style.transition = "transform ".concat(duration, "s ease-out");
       }
@@ -217,7 +255,6 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        // console.log(section.getBoundingClientRect());
         _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
@@ -225,7 +262,8 @@ var MyFullPage = /*#__PURE__*/function () {
       this.buttons[0].classList.add(_consts.CLASSES.sidebarNavButtonActive);
       this.buttons.forEach(function (button, index) {
         button.addEventListener('click', function () {
-          document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+          _functions.default.removeActiveClass();
+
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
           _this3.spinValue = index;
 
@@ -261,21 +299,15 @@ var MyFullPage = /*#__PURE__*/function () {
   return MyFullPage;
 }();
 
-var runAtEnd = function runAtEnd() {
-  console.log('I run at the end');
-};
-
-var runAtStart = function runAtStart() {
-  console.log('I run at the start');
-};
-
 var newNavigation = new MyFullPage();
-newNavigation.setScroll();
 newNavigation.setNavigation();
-newNavigation.setAnimationDuration(1);
-newNavigation.setFuncOnPoint('end', runAtEnd);
-newNavigation.setFuncOnPoint('start', runAtStart); // newNavigation.goTo(1);
-},{"../helpers/_consts":"helpers/_consts.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+newNavigation.setAnimationDuration(); // Duration is set by seconds, not milliseconds
+// 0.5 will add duration for half of a second
+
+newNavigation.setFuncOnPoint('end', _functions.default.runAtEnd);
+newNavigation.setFuncOnPoint('start', _functions.default.runAtStart);
+newNavigation.goTo(1);
+},{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -303,7 +335,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60719" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64326" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
