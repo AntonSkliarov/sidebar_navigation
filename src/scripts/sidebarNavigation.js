@@ -128,4 +128,4 @@ newNavigation.setAnimationDuration(); // Duration is set by seconds, not millise
 
 newNavigation.setFuncOnPoint('end', FUNC.runAtEnd);
 newNavigation.setFuncOnPoint('start', FUNC.runAtStart);
-newNavigation.goTo(0);
+newNavigation.goTo(1);

@@ -306,7 +306,7 @@ newNavigation.setAnimationDuration(); // Duration is set by seconds, not millise
 
 newNavigation.setFuncOnPoint('end', _functions.default.runAtEnd);
 newNavigation.setFuncOnPoint('start', _functions.default.runAtStart);
-newNavigation.goTo(0);
+newNavigation.goTo(1);
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
