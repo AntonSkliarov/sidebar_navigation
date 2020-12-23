@@ -1,3 +1,5 @@
+import { CLASSES } from '../helpers/_consts';
+
 class MyFullPage {
   constructor() {
     this.sections = document.querySelectorAll('.section');
@@ -9,17 +11,38 @@ class MyFullPage {
     this.onStartRunFunc = null;
   }
 
-  scrollContent(count) {
+  setScroll() {
+    window.addEventListener('mousewheel', (event) => {
+      if (this.canScroll) {
+        this.canScroll = false;
+
+        if (event.deltaY > 0) {
+          this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+        } else {
+          this.spinValue -= this.spinValue > 0 ? 1 : 0;
+        }
+
+        this.scrollContent();
+      }
+
+      setTimeout(() => {
+        this.canScroll = true;
+      }, 1000);
+    });
+  }
+
+  scrollContent() {
     if (this.onStartRunFunc) {
       this.onStartRunFunc();
     }
 
-    this.content.style.transform = `translateY(-${count * 100}vh)`;
+    this.content.style.transform = `translateY(-${this.spinValue * 100}vh)`;
 
-    document.querySelector('.sidebar-nav__button_is-active')
+    document
+      .querySelector(CLASSES.navButtonActive)
       .classList.remove('sidebar-nav__button_is-active');
 
-    this.buttons[count].classList.add('sidebar-nav__button_is-active');
+    this.buttons[this.spinValue].classList.add('sidebar-nav__button_is-active');
 
     if (this.onEndRunFunc) {
       setTimeout(() => {
@@ -34,35 +57,16 @@ class MyFullPage {
     }
   }
 
-  setScroll() {
-    window.addEventListener('mousewheel', (event) => {
-      if (this.canScroll) {
-        this.canScroll = false;
-
-        if (event.deltaY > 0) {
-          this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-        } else {
-          this.spinValue -= this.spinValue > 0 ? 1 : 0;
-        }
-
-        this.scrollContent(this.spinValue);
-      }
-
-      setTimeout(() => {
-        this.canScroll = true;
-      }, 500);
-    });
-  }
-
   setNavigation() {
     document.body.insertAdjacentHTML('beforeEnd', '<div class="sidebar-nav"></div>');
 
-    for (let i = 0; i < this.sections.length; i += 1) {
+    this.sections.forEach((section) => {
+      console.log(section.getBoundingClientRect());
       this.sectionNavigation
         += `<div class="sidebar-nav__button"><span class="sidebar-nav__item">
-        ${this.sections[i].dataset.target}
-        </span></div>`;
-    }
+          ${section.dataset.target}
+          </span></div>`;
+    });
 
     document.querySelector('.sidebar-nav').innerHTML = this.sectionNavigation;
 
@@ -70,18 +74,19 @@ class MyFullPage {
 
     this.buttons[0].classList.add('sidebar-nav__button_is-active');
 
-    for (let i = 0; i < this.buttons.length; i += 1) {
-      this.buttons[i].addEventListener('click', () => {
-        document.querySelector('.sidebar-nav__button_is-active')
+    this.buttons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        document
+          .querySelector(CLASSES.navButtonActive)
           .classList.remove('sidebar-nav__button_is-active');
 
-        this.buttons[i].classList.add('sidebar-nav__button_is-active');
+        button.classList.add('sidebar-nav__button_is-active');
 
-        this.spinValue = i;
+        this.spinValue = index;
 
         this.scrollContent(this.spinValue);
       });
-    }
+    });
   }
 
   setFuncOnPoint(point, func) {
@@ -97,12 +102,19 @@ class MyFullPage {
         this.onStartRunFunc = null;
     }
   }
+
+  goTo(sectionNumber) {
+    this.spinValue = sectionNumber;
+    this.scrollContent();
+  }
 }
+
 const runAtEnd = () => {
-  console.log('Look, I\'m running at the end');
+  console.log('I run at the end');
 };
+
 const runAtStart = () => {
-  console.log('Look, I\'m running at the start');
+  console.log('I run at the start');
 };
 
 const newNavigation = new MyFullPage();
@@ -111,3 +123,4 @@ newNavigation.setNavigation();
 newNavigation.setAnimationDuration(1);
 newNavigation.setFuncOnPoint('end', runAtEnd);
 newNavigation.setFuncOnPoint('start', runAtStart);
+// newNavigation.goTo(1);
