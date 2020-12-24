@@ -183,7 +183,7 @@ var MyFullPage = /*#__PURE__*/function () {
   function MyFullPage(config) {
     _classCallCheck(this, MyFullPage);
 
-    this.sections = _consts.DOM.sections;
+    this.sections = config.sections || _consts.DOM.sections;
     this.duration = config.duration || _consts.DEFAULT_DURATION;
     this.parent = config.parent || _consts.DOM.parent;
     this.spinValue = config.spinValue || 0;
@@ -217,23 +217,7 @@ var MyFullPage = /*#__PURE__*/function () {
           _this.onEnd();
         }, this.duration);
       }
-    } // onMouseWheel() {
-    //   window.addEventListener('mousewheel', (event) => {
-    //     if (this.canScroll) {
-    //       this.canScroll = false;
-    //       if (event.deltaY > 0) {
-    //         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-    //       } else {
-    //         this.spinValue -= this.spinValue > 0 ? 1 : 0;
-    //       }
-    //       this.scrollContent();
-    //     }
-    //     setTimeout(() => {
-    //       this.canScroll = true;
-    //     }, this.duration);
-    //   });
-    // }
-
+    }
   }, {
     key: "onMouseWheel",
     value: function onMouseWheel() {
@@ -267,7 +251,7 @@ var MyFullPage = /*#__PURE__*/function () {
         _this2.scrollContent();
       };
 
-      window.addEventListener('mousewheel', throttle(scrollHandler, 1000));
+      window.addEventListener('mousewheel', throttle(scrollHandler, this.duration));
     }
   }, {
     key: "setAnimationDuration",
@@ -337,9 +321,7 @@ var config = {
   canScroll: null,
   onEnd: null,
   onStart: null,
-  dots: true,
-  sectionNavigation: null // do I need it?
-
+  dots: true
 };
 var newNavigation = new MyFullPage(config);
 newNavigation.on('end', _functions.default.runAtEnd);
@@ -373,7 +355,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55255" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58454" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
