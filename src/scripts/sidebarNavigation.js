@@ -8,7 +8,7 @@ import FUNC from '../helpers/_functions';
 
 class MyFullPage {
   constructor(config) {
-    this.sections = DOM.sections;
+    this.sections = config.sections || DOM.sections;
     this.duration = config.duration || DEFAULT_DURATION;
     this.parent = config.parent || DOM.parent;
     this.spinValue = config.spinValue || 0;
@@ -41,26 +41,6 @@ class MyFullPage {
     }
   }
 
-  // onMouseWheel() {
-  //   window.addEventListener('mousewheel', (event) => {
-  //     if (this.canScroll) {
-  //       this.canScroll = false;
-
-  //       if (event.deltaY > 0) {
-  //         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-  //       } else {
-  //         this.spinValue -= this.spinValue > 0 ? 1 : 0;
-  //       }
-
-  //       this.scrollContent();
-  //     }
-
-  //     setTimeout(() => {
-  //       this.canScroll = true;
-  //     }, this.duration);
-  //   });
-  // }
-
   onMouseWheel() {
     const throttle = (func, delay) => {
       let isThrottle = false;
@@ -91,7 +71,7 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    window.addEventListener('mousewheel', throttle(scrollHandler, 1000));
+    window.addEventListener('mousewheel', throttle(scrollHandler, this.duration));
   }
 
   setAnimationDuration(duration) {
@@ -160,7 +140,6 @@ const config = {
   onEnd: null,
   onStart: null,
   dots: true,
-  sectionNavigation: null, // do I need it?
 };
 
 const newNavigation = new MyFullPage(config);
