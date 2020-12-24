@@ -217,29 +217,57 @@ var MyFullPage = /*#__PURE__*/function () {
           _this.onEnd();
         }, this.duration);
       }
-    }
+    } // onMouseWheel() {
+    //   window.addEventListener('mousewheel', (event) => {
+    //     if (this.canScroll) {
+    //       this.canScroll = false;
+    //       if (event.deltaY > 0) {
+    //         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+    //       } else {
+    //         this.spinValue -= this.spinValue > 0 ? 1 : 0;
+    //       }
+    //       this.scrollContent();
+    //     }
+    //     setTimeout(() => {
+    //       this.canScroll = true;
+    //     }, this.duration);
+    //   });
+    // }
+
   }, {
     key: "onMouseWheel",
     value: function onMouseWheel() {
       var _this2 = this;
 
-      window.addEventListener('mousewheel', function (event) {
-        if (_this2.canScroll) {
-          _this2.canScroll = false;
+      var throttle = function throttle(func, delay) {
+        var isThrottle = false;
 
-          if (event.deltaY > 0) {
-            _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
-          } else {
-            _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
+        var wrapper = function wrapper() {
+          if (isThrottle) {
+            return;
           }
 
-          _this2.scrollContent();
+          func.apply(void 0, arguments);
+          isThrottle = true;
+          setTimeout(function () {
+            isThrottle = false;
+          }, delay);
+        };
+
+        return wrapper;
+      };
+
+      var scrollHandler = function scrollHandler(event) {
+        if (event.deltaY > 0) {
+          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
+        } else {
+          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
         }
 
-        setTimeout(function () {
-          _this2.canScroll = true;
-        }, _this2.duration);
-      });
+        _this2.scrollContent();
+      };
+
+      window.addEventListener('mousewheel', throttle(scrollHandler, 1000));
     }
   }, {
     key: "setAnimationDuration",
@@ -303,7 +331,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
 var config = {
   sections: null,
-  duration: null,
+  duration: 1000,
   parent: null,
   spinValue: null,
   canScroll: null,
@@ -345,7 +373,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53271" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55255" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

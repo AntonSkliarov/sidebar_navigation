@@ -41,24 +41,57 @@ class MyFullPage {
     }
   }
 
-  onMouseWheel() {
-    window.addEventListener('mousewheel', (event) => {
-      if (this.canScroll) {
-        this.canScroll = false;
+  // onMouseWheel() {
+  //   window.addEventListener('mousewheel', (event) => {
+  //     if (this.canScroll) {
+  //       this.canScroll = false;
 
-        if (event.deltaY > 0) {
-          this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-        } else {
-          this.spinValue -= this.spinValue > 0 ? 1 : 0;
+  //       if (event.deltaY > 0) {
+  //         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+  //       } else {
+  //         this.spinValue -= this.spinValue > 0 ? 1 : 0;
+  //       }
+
+  //       this.scrollContent();
+  //     }
+
+  //     setTimeout(() => {
+  //       this.canScroll = true;
+  //     }, this.duration);
+  //   });
+  // }
+
+  onMouseWheel() {
+    const throttle = (func, delay) => {
+      let isThrottle = false;
+
+      const wrapper = (...args) => {
+        if (isThrottle) {
+          return;
         }
 
-        this.scrollContent();
+        func(...args);
+
+        isThrottle = true;
+        setTimeout(() => {
+          isThrottle = false;
+        }, delay);
+      };
+
+      return wrapper;
+    };
+
+    const scrollHandler = (event) => {
+      if (event.deltaY > 0) {
+        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+      } else {
+        this.spinValue -= this.spinValue > 0 ? 1 : 0;
       }
 
-      setTimeout(() => {
-        this.canScroll = true;
-      }, this.duration);
-    });
+      this.scrollContent();
+    };
+
+    window.addEventListener('mousewheel', throttle(scrollHandler, 1000));
   }
 
   setAnimationDuration(duration) {
@@ -120,7 +153,7 @@ class MyFullPage {
 
 const config = {
   sections: null,
-  duration: null,
+  duration: 1000,
   parent: null,
   spinValue: null,
   canScroll: null,
