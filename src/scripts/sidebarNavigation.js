@@ -71,7 +71,7 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    window.addEventListener('mousewheel', throttle(scrollHandler, this.duration));
+    window.addEventListener('wheel', throttle(scrollHandler, this.duration));
   }
 
   setAnimationDuration(duration) {
