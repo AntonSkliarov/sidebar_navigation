@@ -2,21 +2,25 @@ import {
   CLASSES,
   DOM,
   VIEWPORT_HEIGHT,
-  ANIMATION_DELAY,
-  MS_COEFFICIENT,
+  DEFAULT_DURATION,
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
 class MyFullPage {
-  constructor() {
+  constructor(config) {
     this.sections = DOM.sections;
-    this.content = DOM.content;
-    this.spinValue = 0;
-    this.canScroll = true;
+    this.duration = config.duration || DEFAULT_DURATION;
+    this.parent = config.parent || DOM.parent;
+    this.spinValue = config.spinValue || 0;
+    this.canScroll = config.canScroll || true;
+    this.onEnd = config.onEndRunFunc || null;
+    this.onStart = config.onStartRunFunc || null;
+    this.dots = config.dots || false;
     this.sectionNavigation = '';
-    this.onEndRunFunc = null;
-    this.onStartRunFunc = null;
-    this.setScroll();
+
+    this.onMouseWheel();
+    this.setAnimationDuration(this.duration);
+    this.generateNavigation(this.dots);
   }
 
   scrollContent() {
@@ -24,7 +28,7 @@ class MyFullPage {
       this.onStartRunFunc();
     }
 
-    this.content.style.transform = `translateY(-${this.spinValue * VIEWPORT_HEIGHT}vh)`;
+    this.parent.style.transform = `translateY(-${this.spinValue * VIEWPORT_HEIGHT}vh)`;
 
     FUNC.removeActiveClass();
 
@@ -33,11 +37,11 @@ class MyFullPage {
     if (this.onEndRunFunc) {
       setTimeout(() => {
         this.onEndRunFunc();
-      }, ANIMATION_DELAY * MS_COEFFICIENT);
+      }, this.duration);
     }
   }
 
-  setScroll() {
+  onMouseWheel() {
     window.addEventListener('mousewheel', (event) => {
       if (this.canScroll) {
         this.canScroll = false;
@@ -53,17 +57,19 @@ class MyFullPage {
 
       setTimeout(() => {
         this.canScroll = true;
-      }, ANIMATION_DELAY * MS_COEFFICIENT);
+      }, this.duration);
     });
   }
 
-  setAnimationDuration(duration = ANIMATION_DELAY) {
-    if (duration) {
-      this.content.style.transition = `transform ${duration}s ease-out`;
-    }
+  setAnimationDuration(duration) {
+    this.parent.style.transition = `transform ${duration}ms ease-out`;
   }
 
-  setNavigation() {
+  generateNavigation(dots) {
+    if (!dots) {
+      return;
+    }
+
     document.body.insertAdjacentHTML('beforeEnd', DOM.sidebarNav);
 
     this.sections.forEach((section) => {
@@ -92,7 +98,7 @@ class MyFullPage {
     });
   }
 
-  setFuncOnPoint(point, func) {
+  on(point, func) {
     switch (point) {
       case 'end':
         this.onEndRunFunc = func;
@@ -112,11 +118,19 @@ class MyFullPage {
   }
 }
 
-const newNavigation = new MyFullPage();
-newNavigation.setNavigation();
-newNavigation.setAnimationDuration(); // Duration is set by seconds, not milliseconds
-// 0.5 will add duration for half of a second
+const config = {
+  sections: null,
+  duration: null,
+  parent: null,
+  spinValue: null,
+  canScroll: null,
+  onEnd: null,
+  onStart: null,
+  dots: true,
+  sectionNavigation: null, // do I need it?
+};
 
-newNavigation.setFuncOnPoint('end', FUNC.runAtEnd);
-newNavigation.setFuncOnPoint('start', FUNC.runAtStart);
-newNavigation.goTo(1);
+const newNavigation = new MyFullPage(config);
+newNavigation.on('end', FUNC.runAtEnd);
+newNavigation.on('start', FUNC.runAtStart);
+newNavigation.goTo(0);

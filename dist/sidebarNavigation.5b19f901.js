@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MS_COEFFICIENT = exports.ANIMATION_DELAY = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
+exports.DEFAULT_DURATION = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
 var CLASSES = {
   sidebarNav: 'sidebar-nav',
   sidebarNavButton: 'sidebar-nav__button',
@@ -132,17 +132,15 @@ var CLASSES = {
 };
 exports.CLASSES = CLASSES;
 var DOM = {
-  content: document.querySelector('.main-content'),
+  parent: document.querySelector('.main-content'),
   sections: document.querySelectorAll('.section'),
   sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
 };
 exports.DOM = DOM;
 var VIEWPORT_HEIGHT = 100;
 exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
-var ANIMATION_DELAY = 1;
-exports.ANIMATION_DELAY = ANIMATION_DELAY;
-var MS_COEFFICIENT = 1000;
-exports.MS_COEFFICIENT = MS_COEFFICIENT;
+var DEFAULT_DURATION = 500;
+exports.DEFAULT_DURATION = DEFAULT_DURATION;
 },{}],"helpers/_functions.js":[function(require,module,exports) {
 "use strict";
 
@@ -182,17 +180,21 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var MyFullPage = /*#__PURE__*/function () {
-  function MyFullPage() {
+  function MyFullPage(config) {
     _classCallCheck(this, MyFullPage);
 
     this.sections = _consts.DOM.sections;
-    this.content = _consts.DOM.content;
-    this.spinValue = 0;
-    this.canScroll = true;
+    this.duration = config.duration || _consts.DEFAULT_DURATION;
+    this.parent = config.parent || _consts.DOM.parent;
+    this.spinValue = config.spinValue || 0;
+    this.canScroll = config.canScroll || true;
+    this.onEnd = config.onEndRunFunc || null;
+    this.onStart = config.onStartRunFunc || null;
+    this.dots = config.dots || false;
     this.sectionNavigation = '';
-    this.onEndRunFunc = null;
-    this.onStartRunFunc = null;
-    this.setScroll();
+    this.onMouseWheel();
+    this.setAnimationDuration(this.duration);
+    this.generateNavigation(this.dots);
   }
 
   _createClass(MyFullPage, [{
@@ -204,7 +206,7 @@ var MyFullPage = /*#__PURE__*/function () {
         this.onStartRunFunc();
       }
 
-      this.content.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
+      this.parent.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
 
       _functions.default.removeActiveClass();
 
@@ -213,12 +215,12 @@ var MyFullPage = /*#__PURE__*/function () {
       if (this.onEndRunFunc) {
         setTimeout(function () {
           _this.onEndRunFunc();
-        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
+        }, this.duration);
       }
     }
   }, {
-    key: "setScroll",
-    value: function setScroll() {
+    key: "onMouseWheel",
+    value: function onMouseWheel() {
       var _this2 = this;
 
       window.addEventListener('mousewheel', function (event) {
@@ -236,22 +238,22 @@ var MyFullPage = /*#__PURE__*/function () {
 
         setTimeout(function () {
           _this2.canScroll = true;
-        }, _consts.ANIMATION_DELAY * _consts.MS_COEFFICIENT);
+        }, _this2.duration);
       });
     }
   }, {
     key: "setAnimationDuration",
-    value: function setAnimationDuration() {
-      var duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _consts.ANIMATION_DELAY;
-
-      if (duration) {
-        this.content.style.transition = "transform ".concat(duration, "s ease-out");
-      }
+    value: function setAnimationDuration(duration) {
+      this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
     }
   }, {
-    key: "setNavigation",
-    value: function setNavigation() {
+    key: "generateNavigation",
+    value: function generateNavigation(dots) {
       var _this3 = this;
+
+      if (!dots) {
+        return;
+      }
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
@@ -272,8 +274,8 @@ var MyFullPage = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "setFuncOnPoint",
-    value: function setFuncOnPoint(point, func) {
+    key: "on",
+    value: function on(point, func) {
       switch (point) {
         case 'end':
           this.onEndRunFunc = func;
@@ -299,14 +301,22 @@ var MyFullPage = /*#__PURE__*/function () {
   return MyFullPage;
 }();
 
-var newNavigation = new MyFullPage();
-newNavigation.setNavigation();
-newNavigation.setAnimationDuration(); // Duration is set by seconds, not milliseconds
-// 0.5 will add duration for half of a second
+var config = {
+  sections: null,
+  duration: null,
+  parent: null,
+  spinValue: null,
+  canScroll: null,
+  onEnd: null,
+  onStart: null,
+  dots: true,
+  sectionNavigation: null // do I need it?
 
-newNavigation.setFuncOnPoint('end', _functions.default.runAtEnd);
-newNavigation.setFuncOnPoint('start', _functions.default.runAtStart);
-newNavigation.goTo(1);
+};
+var newNavigation = new MyFullPage(config);
+newNavigation.on('end', _functions.default.runAtEnd);
+newNavigation.on('start', _functions.default.runAtStart);
+newNavigation.goTo(0);
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -335,7 +345,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64326" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49963" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
