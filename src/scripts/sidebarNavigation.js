@@ -13,8 +13,8 @@ class MyFullPage {
     this.parent = config.parent || DOM.parent;
     this.spinValue = config.spinValue || 0;
     this.canScroll = config.canScroll || true;
-    this.onEnd = config.onEndRunFunc || null;
-    this.onStart = config.onStartRunFunc || null;
+    this.onEnd = config.onEnd || null;
+    this.onStart = config.onStart || null;
     this.dots = config.dots || false;
     this.sectionNavigation = '';
 
@@ -24,8 +24,8 @@ class MyFullPage {
   }
 
   scrollContent() {
-    if (this.onStartRunFunc) {
-      this.onStartRunFunc();
+    if (this.onStart) {
+      this.onStart();
     }
 
     this.parent.style.transform = `translateY(-${this.spinValue * VIEWPORT_HEIGHT}vh)`;
@@ -34,9 +34,9 @@ class MyFullPage {
 
     this.buttons[this.spinValue].classList.add(CLASSES.sidebarNavButtonActive);
 
-    if (this.onEndRunFunc) {
+    if (this.onEnd) {
       setTimeout(() => {
-        this.onEndRunFunc();
+        this.onEnd();
       }, this.duration);
     }
   }
@@ -101,14 +101,14 @@ class MyFullPage {
   on(point, func) {
     switch (point) {
       case 'end':
-        this.onEndRunFunc = func;
+        this.onEnd = func;
         break;
       case 'start':
-        this.onStartRunFunc = func;
+        this.onStart = func;
         break;
       default:
-        this.onEndRunFunc = null;
-        this.onStartRunFunc = null;
+        this.onEnd = null;
+        this.onStart = null;
     }
   }
 
