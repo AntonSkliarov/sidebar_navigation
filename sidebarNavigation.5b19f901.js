@@ -188,8 +188,8 @@ var MyFullPage = /*#__PURE__*/function () {
     this.parent = config.parent || _consts.DOM.parent;
     this.spinValue = config.spinValue || 0;
     this.canScroll = config.canScroll || true;
-    this.onEnd = config.onEndRunFunc || null;
-    this.onStart = config.onStartRunFunc || null;
+    this.onEnd = config.onEnd || null;
+    this.onStart = config.onStart || null;
     this.dots = config.dots || false;
     this.sectionNavigation = '';
     this.onMouseWheel();
@@ -202,8 +202,8 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function scrollContent() {
       var _this = this;
 
-      if (this.onStartRunFunc) {
-        this.onStartRunFunc();
+      if (this.onStart) {
+        this.onStart();
       }
 
       this.parent.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
@@ -212,9 +212,9 @@ var MyFullPage = /*#__PURE__*/function () {
 
       this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
 
-      if (this.onEndRunFunc) {
+      if (this.onEnd) {
         setTimeout(function () {
-          _this.onEndRunFunc();
+          _this.onEnd();
         }, this.duration);
       }
     }
@@ -278,16 +278,16 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function on(point, func) {
       switch (point) {
         case 'end':
-          this.onEndRunFunc = func;
+          this.onEnd = func;
           break;
 
         case 'start':
-          this.onStartRunFunc = func;
+          this.onStart = func;
           break;
 
         default:
-          this.onEndRunFunc = null;
-          this.onStartRunFunc = null;
+          this.onEnd = null;
+          this.onStart = null;
       }
     }
   }, {
@@ -345,7 +345,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49963" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53271" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
