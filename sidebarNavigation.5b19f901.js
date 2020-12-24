@@ -251,7 +251,7 @@ var MyFullPage = /*#__PURE__*/function () {
         _this2.scrollContent();
       };
 
-      window.addEventListener('mousewheel', throttle(scrollHandler, this.duration));
+      window.addEventListener('wheel', throttle(scrollHandler, this.duration));
     }
   }, {
     key: "setAnimationDuration",
@@ -355,7 +355,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58454" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55216" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
