@@ -306,32 +306,13 @@ var MyFullPage = /*#__PURE__*/function () {
 
 
       var touchpadScrollHandler = function touchpadScrollHandler() {
-        console.log('currentScrollY: ', _this2.currentScrollY);
-        var userScrollY = window.scrollY;
-
-        if (userScrollY > _this2.currentScrollY) {
-          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
-        }
-
-        if (userScrollY < _this2.currentScrollY) {
-          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
-        }
-
-        _this2.currentScrollY = userScrollY;
-
-        _this2.scrollContent();
-
-        console.log('userScrollY: ', userScrollY);
-        console.log('spinValue: ', _this2.spinValue);
+        console.log('scrolled');
       }; // working on end
 
 
       window.addEventListener('wheel', throttle(scrollHandler, this.duration)); // working on start
 
-      document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration));
-      document.addEventListener('touchstart', function () {
-        console.log('touch');
-      }); // working on end
+      document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration)); // working on end
     }
   }, {
     key: "setAnimationDuration",
