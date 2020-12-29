@@ -75,22 +75,7 @@ class MyFullPage {
 
     // working on start
     const touchpadScrollHandler = () => {
-      console.log('currentScrollY: ', this.currentScrollY);
-      const userScrollY = window.scrollY;
-
-      if (userScrollY > this.currentScrollY) {
-        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-      }
-
-      if (userScrollY < this.currentScrollY) {
-        this.spinValue -= this.spinValue > 0 ? 1 : 0;
-      }
-
-      this.currentScrollY = userScrollY;
-
-      this.scrollContent();
-      console.log('userScrollY: ', userScrollY);
-      console.log('spinValue: ', this.spinValue);
+      console.log('scrolled');
     };
     // working on end
 
@@ -98,9 +83,6 @@ class MyFullPage {
 
     // working on start
     document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration));
-    document.addEventListener('touchstart', () => {
-      console.log('touch');
-    });
     // working on end
   }
 
