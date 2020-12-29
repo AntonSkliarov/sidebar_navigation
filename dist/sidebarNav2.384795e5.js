@@ -117,79 +117,150 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
-var bundleURL = null;
+})({"scripts/sidebarNav2.js":[function(require,module,exports) {
+function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
 
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
+function sibarNav() {
+  var pnls = document.querySelectorAll('.panel').length,
+      scdir = false,
+      hold = false;
 
-  return bundleURL;
-}
+  function _scrollY(obj) {
+    var slength,
+        plength,
+        pan,
+        step = 100,
+        vh = window.innerHeight / 100,
+        vmin = Math.min(window.innerHeight, window.innerWidth) / 100;
+    console.log(vh);
 
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
-
-    if (matches) {
-      return getBaseURL(matches[0]);
+    if (this !== undefined && this.id === 'well' || obj !== undefined && obj.id === 'well') {
+      pan = this || obj;
+      plength = parseInt(pan.offsetHeight / vh);
     }
+
+    if (pan === undefined) {
+      return;
+    }
+
+    plength = plength || parseInt(pan.offsetHeight / vmin);
+    slength = parseInt(pan.style.transform.replace('translateY(', ''));
+
+    if (scdir === 'up' && Math.abs(slength) < plength - plength / pnls) {
+      slength = slength - step;
+    } else if (scdir === 'down' && slength < 0) {
+      slength = slength + step;
+    } else if (scdir === 'top') {
+      slength = 0;
+    }
+
+    if (hold === false) {
+      hold = (_readOnlyError("hold"), true);
+      pan.style.transform = 'translateY(' + slength + 'vh)';
+      setTimeout(function () {
+        hold = (_readOnlyError("hold"), false);
+      }, 1000);
+    }
+
+    console.log(scdir + ':' + slength + ':' + plength + ':' + (plength - plength / pnls));
   }
+  /*[swipe detection on touchscreen devices]*/
 
-  return '/';
-}
 
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
-}
+  function _swipe(obj) {
+    var swdir,
+        sX,
+        sY,
+        dX,
+        dY,
+        threshold = 100,
 
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
-var bundle = require('./bundle-url');
+    /*[min distance traveled to be considered swipe]*/
+    slack = 50,
 
-function updateLink(link) {
-  var newLink = link.cloneNode();
+    /*[max distance allowed at the same time in perpendicular direction]*/
+    alT = 500,
 
-  newLink.onload = function () {
-    link.remove();
-  };
+    /*[max time allowed to travel that distance]*/
+    elT,
 
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
+    /*[elapsed time]*/
+    stT;
+    /*[start time]*/
 
-var cssTimeout = null;
+    obj.addEventListener('touchstart', function (e) {
+      var tchs = e.changedTouches[0];
+      swdir = 'none';
+      sX = tchs.pageX;
+      sY = tchs.pageY;
+      stT = new Date().getTime(); //e.preventDefault();
+    }, false);
+    obj.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+      /*[prevent scrolling when inside DIV]*/
+    }, false);
+    obj.addEventListener('touchend', function (e) {
+      var tchs = e.changedTouches[0];
+      dX = tchs.pageX - sX;
+      dY = tchs.pageY - sY;
+      elT = new Date().getTime() - stT;
 
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
+      if (elT <= alT) {
+        if (Math.abs(dX) >= threshold && Math.abs(dY) <= slack) {
+          swdir = dX < 0 ? 'left' : 'right';
+        } else if (Math.abs(dY) >= threshold && Math.abs(dX) <= slack) {
+          swdir = dY < 0 ? 'up' : 'down';
+        }
 
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
+        if (obj.id === 'well') {
+          if (swdir === 'up') {
+            scdir = (_readOnlyError("scdir"), swdir);
 
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
+            _scrollY(obj);
+          } else if (swdir === 'down' && obj.style.transform !== 'translateY(0)') {
+            scdir = (_readOnlyError("scdir"), swdir);
+
+            _scrollY(obj);
+          }
+
+          e.stopPropagation();
+        }
       }
+    }, false);
+  }
+  /*[assignments]*/
+
+
+  var well = document.getElementById('well');
+  well.style.transform = 'translateY(0)';
+  well.addEventListener('wheel', function (e) {
+    if (e.deltaY < 0) {
+      scdir = (_readOnlyError("scdir"), 'down');
     }
 
-    cssTimeout = null;
-  }, 50);
+    if (e.deltaY > 0) {
+      scdir = (_readOnlyError("scdir"), 'up');
+    }
+
+    e.stopPropagation();
+  });
+  well.addEventListener('wheel', _scrollY);
+
+  _swipe(well);
+
+  var tops = document.querySelectorAll('.top');
+
+  for (var i = 0; i < tops.length; i++) {
+    tops[i].addEventListener('click', function () {
+      scdir = (_readOnlyError("scdir"), 'top');
+
+      _scrollY(well);
+    });
+  }
 }
 
-module.exports = reloadCSS;
-},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"styles/main.sass":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+sibarNav();
+},{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -217,7 +288,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55965" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56664" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -393,5 +464,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
-//# sourceMappingURL=/main.22a94128.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/sidebarNav2.js"], null)
+//# sourceMappingURL=/sidebarNav2.384795e5.js.map

@@ -11,7 +11,7 @@ class MyFullPage {
     this.sections = config.sections || DOM.sections;
     this.duration = config.duration || DEFAULT_DURATION;
     this.parent = config.parent || DOM.parent;
-    this.spinValue = config.spinValue || 0;
+    this.spinValue = config.spinValue || FUNC.isInViewport(this.sections);
     this.canScroll = config.canScroll || true;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
@@ -21,6 +21,8 @@ class MyFullPage {
     this.onMouseWheel();
     this.setAnimationDuration(this.duration);
     this.generateNavigation(this.dots);
+
+    this.currentScrollY = window.scrollY;
   }
 
   scrollContent() {
@@ -71,7 +73,35 @@ class MyFullPage {
       this.scrollContent();
     };
 
+    // working on start
+    const touchpadScrollHandler = () => {
+      console.log('currentScrollY: ', this.currentScrollY);
+      const userScrollY = window.scrollY;
+
+      if (userScrollY > this.currentScrollY) {
+        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+      }
+
+      if (userScrollY < this.currentScrollY) {
+        this.spinValue -= this.spinValue > 0 ? 1 : 0;
+      }
+
+      this.currentScrollY = userScrollY;
+
+      this.scrollContent();
+      console.log('userScrollY: ', userScrollY);
+      console.log('spinValue: ', this.spinValue);
+    };
+    // working on end
+
     window.addEventListener('wheel', throttle(scrollHandler, this.duration));
+
+    // working on start
+    document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration));
+    document.addEventListener('touchstart', () => {
+      console.log('touch');
+    });
+    // working on end
   }
 
   setAnimationDuration(duration) {
@@ -98,7 +128,7 @@ class MyFullPage {
     document.querySelector(`.${CLASSES.sidebarNav}`).innerHTML = this.sectionNavigation;
 
     this.buttons = document.querySelectorAll(`.${CLASSES.sidebarNavButton}`);
-    this.buttons[0].classList.add(CLASSES.sidebarNavButtonActive);
+    this.buttons[this.spinValue].classList.add(CLASSES.sidebarNavButtonActive);
     this.buttons.forEach((button, index) => {
       button.addEventListener('click', () => {
         FUNC.removeActiveClass();
@@ -145,4 +175,4 @@ const config = {
 const newNavigation = new MyFullPage(config);
 newNavigation.on('end', FUNC.runAtEnd);
 newNavigation.on('start', FUNC.runAtStart);
-newNavigation.goTo(0);
+// newNavigation.goTo(0);

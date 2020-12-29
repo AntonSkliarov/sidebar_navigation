@@ -151,6 +151,18 @@ exports.default = void 0;
 
 var _consts = require("./_consts");
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var FUNC = {
   runAtEnd: function runAtEnd() {
     console.log('I run at the end');
@@ -160,6 +172,46 @@ var FUNC = {
   },
   removeActiveClass: function removeActiveClass() {
     document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+  },
+  // currentSectionCheck: (sections) => {
+  //   function elementInViewport(el) {
+  //     const top = el.offsetTop;
+  //     const left = el.offsetLeft;
+  //     const width = el.offsetWidth;
+  //     const height = el.offsetHeight;
+  //     return (
+  //       top < (window.pageYOffset + window.innerHeight)
+  //       && left < (window.pageXOffset + window.innerWidth)
+  //       && (top + height) > window.pageYOffset
+  //       && (left + width) > window.pageXOffset
+  //     );
+  //   }
+  //   const visibleSectionCheck = [...sections].map((section) => elementInViewport(section));
+  //   console.log(visibleSectionCheck);
+  //   return visibleSectionCheck.indexOf(true);
+  // },
+  isInViewport: function isInViewport(elements) {
+    var checkCurrentElement = function checkCurrentElement(elem) {
+      var bounding = elem.getBoundingClientRect(); // console.log(bounding.bottom);
+      // console.log('bounding: ', bounding);
+      // console.log('Height: ', document.body.scrollHeight);
+      // console.log('result: ', bounding.bottom - (document.body.scrollHeight / elements.length));
+
+      var currentSectionCheck = bounding.bottom - document.body.scrollHeight / elements.length;
+      return currentSectionCheck; // return (
+      //   (bounding.top >= 0 && bounding.bottom >= 0)
+      //   // && bounding.left >= 0
+      //   && bounding.top <= (window.innerHeight || document.documentElement.clientHeight)
+      //   // && bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+      // );
+    };
+
+    var visibleElementCheck = _toConsumableArray(elements).map(function (element) {
+      return checkCurrentElement(element);
+    }); // console.log(visibleElementCheck);
+
+
+    return visibleElementCheck.indexOf(0);
   }
 };
 var _default = FUNC;
@@ -186,7 +238,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sections = config.sections || _consts.DOM.sections;
     this.duration = config.duration || _consts.DEFAULT_DURATION;
     this.parent = config.parent || _consts.DOM.parent;
-    this.spinValue = config.spinValue || 0;
+    this.spinValue = config.spinValue || _functions.default.isInViewport(this.sections);
     this.canScroll = config.canScroll || true;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
@@ -195,6 +247,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.onMouseWheel();
     this.setAnimationDuration(this.duration);
     this.generateNavigation(this.dots);
+    this.currentScrollY = window.scrollY;
   }
 
   _createClass(MyFullPage, [{
@@ -249,9 +302,36 @@ var MyFullPage = /*#__PURE__*/function () {
         }
 
         _this2.scrollContent();
-      };
+      }; // working on start
 
-      window.addEventListener('wheel', throttle(scrollHandler, this.duration));
+
+      var touchpadScrollHandler = function touchpadScrollHandler() {
+        console.log('currentScrollY: ', _this2.currentScrollY);
+        var userScrollY = window.scrollY;
+
+        if (userScrollY > _this2.currentScrollY) {
+          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
+        }
+
+        if (userScrollY < _this2.currentScrollY) {
+          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
+        }
+
+        _this2.currentScrollY = userScrollY;
+
+        _this2.scrollContent();
+
+        console.log('userScrollY: ', userScrollY);
+        console.log('spinValue: ', _this2.spinValue);
+      }; // working on end
+
+
+      window.addEventListener('wheel', throttle(scrollHandler, this.duration)); // working on start
+
+      document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration));
+      document.addEventListener('touchstart', function () {
+        console.log('touch');
+      }); // working on end
     }
   }, {
     key: "setAnimationDuration",
@@ -273,7 +353,7 @@ var MyFullPage = /*#__PURE__*/function () {
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
       this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
-      this.buttons[0].classList.add(_consts.CLASSES.sidebarNavButtonActive);
+      this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
       this.buttons.forEach(function (button, index) {
         button.addEventListener('click', function () {
           _functions.default.removeActiveClass();
@@ -325,8 +405,7 @@ var config = {
 };
 var newNavigation = new MyFullPage(config);
 newNavigation.on('end', _functions.default.runAtEnd);
-newNavigation.on('start', _functions.default.runAtStart);
-newNavigation.goTo(0);
+newNavigation.on('start', _functions.default.runAtStart); // newNavigation.goTo(0);
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -355,7 +434,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55216" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55965" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
