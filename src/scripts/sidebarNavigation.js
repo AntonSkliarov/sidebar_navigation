@@ -11,7 +11,7 @@ class MyFullPage {
     this.sections = config.sections || DOM.sections;
     this.duration = config.duration || DEFAULT_DURATION;
     this.parent = config.parent || DOM.parent;
-    this.spinValue = config.spinValue || FUNC.isInViewport(this.sections);
+    this.spinValue = config.spinValue || 0;
     this.canScroll = config.canScroll || true;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
@@ -22,7 +22,8 @@ class MyFullPage {
     this.setAnimationDuration(this.duration);
     this.generateNavigation(this.dots);
 
-    this.currentScrollY = window.scrollY;
+    this.onScroll();
+    // this.currentScrollTop = window.scrollY;
   }
 
   scrollContent() {
@@ -63,7 +64,7 @@ class MyFullPage {
       return wrapper;
     };
 
-    const scrollHandler = (event) => {
+    const wheelHandler = (event) => {
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
@@ -73,22 +74,41 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    // working on start
-    const touchpadScrollHandler = () => {
-      console.log('scrolled');
-    };
-    // working on end
-
-    window.addEventListener('wheel', throttle(scrollHandler, this.duration));
-
-    // working on start
-    document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration));
-    // working on end
+    window.addEventListener('wheel', throttle(wheelHandler, this.duration));
   }
 
   setAnimationDuration(duration) {
     this.parent.style.transition = `transform ${duration}ms ease-out`;
   }
+
+  // in progress - start
+  onScroll() {
+    const throttle = (func, delay) => {
+      let time = Date.now();
+      return function wrapper() {
+        if ((time + delay - Date.now()) < 0) {
+          func();
+          time = Date.now();
+        }
+      };
+    };
+
+    const scrollHandler = () => {
+      if (window.scrollY > 0) {
+        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+      } else {
+        this.spinValue -= this.spinValue > 0 ? 1 : 0;
+      }
+
+      this.scrollContent();
+
+      console.log('scrolled');
+      console.log('window.scrollY: ', window.scrollY);
+    };
+
+    document.addEventListener('scroll', throttle(scrollHandler, 1000));
+  }
+  // in progress - end
 
   generateNavigation(dots) {
     if (!dots) {
