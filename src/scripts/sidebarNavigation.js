@@ -22,10 +22,6 @@ class MyFullPage {
 
     this.onMouseWheel();
     this.setAnimationDuration(this.duration);
-    this.generateNavigation(this.dots);
-
-    // this.onScroll();
-    // this.currentScrollTop = window.scrollY;
   }
 
   scrollContent() {
@@ -47,17 +43,6 @@ class MyFullPage {
   }
 
   onMouseWheel() {
-    const throttle = (func, delay) => {
-      let lastTime = 0;
-      return function wrapper(...args) {
-        const now = new Date();
-        if (now - lastTime >= delay) {
-          func(...args);
-          lastTime = now;
-        }
-      };
-    };
-
     const wheelHandler = (event) => {
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
@@ -75,37 +60,8 @@ class MyFullPage {
     this.parent.style.transition = `transform ${duration}ms ease-out`;
   }
 
-  // in progress - start
-  // onScroll() {
-  //   const throttle = (func, delay) => {
-  //     let time = Date.now();
-  //     return function wrapper() {
-  //       if ((time + delay - Date.now()) < 0) {
-  //         func();
-  //         time = Date.now();
-  //       }
-  //     };
-  //   };
-
-  //   const scrollHandler = () => {
-  //     if (window.scrollY > 0) {
-  //       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-  //     } else {
-  //       this.spinValue -= this.spinValue > 0 ? 1 : 0;
-  //     }
-
-  //     this.scrollContent();
-
-  //     console.log('scrolled');
-  //     console.log('window.scrollY: ', window.scrollY);
-  //   };
-
-  //   document.addEventListener('scroll', throttle(scrollHandler, 1000));
-  // }
-  // in progress - end
-
-  generateNavigation(dots) {
-    if (!dots) {
+  generateNavigation() {
+    if (!this.dots) {
       return;
     }
 
@@ -169,6 +125,7 @@ const config = {
 };
 
 const newNavigation = new MyFullPage(config);
+newNavigation.generateNavigation();
 newNavigation.on('end', FUNC.runAtEnd);
 newNavigation.on('start', FUNC.runAtStart);
 // newNavigation.goTo(0);

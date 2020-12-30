@@ -268,8 +268,6 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sectionNavigation = '';
     this.onMouseWheel();
     this.setAnimationDuration(this.duration);
-    this.generateNavigation(this.dots); // this.onScroll();
-    // this.currentScrollTop = window.scrollY;
   }
 
   _createClass(MyFullPage, [{
@@ -298,18 +296,6 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function onMouseWheel() {
       var _this2 = this;
 
-      var throttle = function throttle(func, delay) {
-        var lastTime = 0;
-        return function wrapper() {
-          var now = new Date();
-
-          if (now - lastTime >= delay) {
-            func.apply(void 0, arguments);
-            lastTime = now;
-          }
-        };
-      };
-
       var wheelHandler = function wheelHandler(event) {
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
@@ -326,37 +312,13 @@ var MyFullPage = /*#__PURE__*/function () {
     key: "setAnimationDuration",
     value: function setAnimationDuration(duration) {
       this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
-    } // in progress - start
-    // onScroll() {
-    //   const throttle = (func, delay) => {
-    //     let time = Date.now();
-    //     return function wrapper() {
-    //       if ((time + delay - Date.now()) < 0) {
-    //         func();
-    //         time = Date.now();
-    //       }
-    //     };
-    //   };
-    //   const scrollHandler = () => {
-    //     if (window.scrollY > 0) {
-    //       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-    //     } else {
-    //       this.spinValue -= this.spinValue > 0 ? 1 : 0;
-    //     }
-    //     this.scrollContent();
-    //     console.log('scrolled');
-    //     console.log('window.scrollY: ', window.scrollY);
-    //   };
-    //   document.addEventListener('scroll', throttle(scrollHandler, 1000));
-    // }
-    // in progress - end
-
+    }
   }, {
     key: "generateNavigation",
-    value: function generateNavigation(dots) {
+    value: function generateNavigation() {
       var _this3 = this;
 
-      if (!dots) {
+      if (!this.dots) {
         return;
       }
 
@@ -417,6 +379,7 @@ var config = {
   dots: true
 };
 var newNavigation = new MyFullPage(config);
+newNavigation.generateNavigation();
 newNavigation.on('end', _functions.default.runAtEnd);
 newNavigation.on('start', _functions.default.runAtStart); // newNavigation.goTo(0);
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js","debounce":"../node_modules/debounce/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -447,7 +410,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59576" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59623" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
