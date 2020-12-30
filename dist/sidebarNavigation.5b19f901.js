@@ -225,11 +225,13 @@ var MyFullPage = /*#__PURE__*/function () {
       var _this2 = this;
 
       var throttle = function throttle(func, delay) {
-        var time = Date.now();
+        var lastTime = 0;
         return function wrapper() {
-          if (time + delay - Date.now() < 0) {
+          var now = new Date();
+
+          if (now - lastTime >= delay) {
             func.apply(void 0, arguments);
-            time = Date.now();
+            lastTime = now;
           }
         };
       };
@@ -371,7 +373,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57829" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58697" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

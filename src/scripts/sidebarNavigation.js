@@ -46,11 +46,12 @@ class MyFullPage {
 
   onMouseWheel() {
     const throttle = (func, delay) => {
-      let time = Date.now();
+      let lastTime = 0;
       return function wrapper(...args) {
-        if ((time + delay - Date.now()) < 0) {
+        const now = new Date();
+        if (now - lastTime >= delay) {
           func(...args);
-          time = Date.now();
+          lastTime = now;
         }
       };
     };
