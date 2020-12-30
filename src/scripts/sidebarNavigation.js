@@ -46,23 +46,14 @@ class MyFullPage {
 
   onMouseWheel() {
     const throttle = (func, delay) => {
-      let isThrottle = false;
-
-      const wrapper = (...args) => {
-        if (isThrottle) {
-          return;
+      let time = Date.now();
+      return function wrapper() {
+        if ((time + delay - Date.now()) < 0) {
+          func();
+          time = Date.now();
         }
-
-        func(...args);
-
-        isThrottle = true;
-        setTimeout(() => {
-          isThrottle = false;
-        }, delay);
       };
-
-      return wrapper;
-    };
+    };;
 
     const wheelHandler = (event) => {
       if (event.deltaY > 0) {
@@ -82,32 +73,32 @@ class MyFullPage {
   }
 
   // in progress - start
-  onScroll() {
-    const throttle = (func, delay) => {
-      let time = Date.now();
-      return function wrapper() {
-        if ((time + delay - Date.now()) < 0) {
-          func();
-          time = Date.now();
-        }
-      };
-    };
+  // onScroll() {
+  //   const throttle = (func, delay) => {
+  //     let time = Date.now();
+  //     return function wrapper() {
+  //       if ((time + delay - Date.now()) < 0) {
+  //         func();
+  //         time = Date.now();
+  //       }
+  //     };
+  //   };
 
-    const scrollHandler = () => {
-      if (window.scrollY > 0) {
-        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-      } else {
-        this.spinValue -= this.spinValue > 0 ? 1 : 0;
-      }
+  //   const scrollHandler = () => {
+  //     if (window.scrollY > 0) {
+  //       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+  //     } else {
+  //       this.spinValue -= this.spinValue > 0 ? 1 : 0;
+  //     }
 
-      this.scrollContent();
+  //     this.scrollContent();
 
-      console.log('scrolled');
-      console.log('window.scrollY: ', window.scrollY);
-    };
+  //     console.log('scrolled');
+  //     console.log('window.scrollY: ', window.scrollY);
+  //   };
 
-    document.addEventListener('scroll', throttle(scrollHandler, 1000));
-  }
+  //   document.addEventListener('scroll', throttle(scrollHandler, 1000));
+  // }
   // in progress - end
 
   generateNavigation(dots) {
