@@ -6,6 +6,8 @@ import {
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
+const debounce = require('debounce');
+
 class MyFullPage {
   constructor(config) {
     this.sections = config.sections || DOM.sections;
@@ -66,7 +68,7 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    window.addEventListener('wheel', throttle(wheelHandler, this.duration));
+    window.addEventListener('wheel', debounce(wheelHandler, this.duration));
   }
 
   setAnimationDuration(duration) {
