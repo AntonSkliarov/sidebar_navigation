@@ -22,7 +22,7 @@ class MyFullPage {
     this.setAnimationDuration(this.duration);
     this.generateNavigation(this.dots);
 
-    this.onScroll();
+    // this.onScroll();
     // this.currentScrollTop = window.scrollY;
   }
 
@@ -47,13 +47,13 @@ class MyFullPage {
   onMouseWheel() {
     const throttle = (func, delay) => {
       let time = Date.now();
-      return function wrapper() {
+      return function wrapper(...args) {
         if ((time + delay - Date.now()) < 0) {
-          func();
+          func(...args);
           time = Date.now();
         }
       };
-    };;
+    };
 
     const wheelHandler = (event) => {
       if (event.deltaY > 0) {
