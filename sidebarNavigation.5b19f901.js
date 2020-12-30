@@ -225,22 +225,16 @@ var MyFullPage = /*#__PURE__*/function () {
       var _this2 = this;
 
       var throttle = function throttle(func, delay) {
-        var isThrottle = false;
-
-        var wrapper = function wrapper() {
-          if (isThrottle) {
-            return;
+        var time = Date.now();
+        return function wrapper() {
+          if (time + delay - Date.now() < 0) {
+            func();
+            time = Date.now();
           }
-
-          func.apply(void 0, arguments);
-          isThrottle = true;
-          setTimeout(function () {
-            isThrottle = false;
-          }, delay);
         };
-
-        return wrapper;
       };
+
+      ;
 
       var wheelHandler = function wheelHandler(event) {
         if (event.deltaY > 0) {
@@ -259,42 +253,34 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function setAnimationDuration(duration) {
       this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
     } // in progress - start
-
-  }, {
-    key: "onScroll",
-    value: function onScroll() {
-      var _this3 = this;
-
-      var throttle = function throttle(func, delay) {
-        var time = Date.now();
-        return function wrapper() {
-          if (time + delay - Date.now() < 0) {
-            func();
-            time = Date.now();
-          }
-        };
-      };
-
-      var scrollHandler = function scrollHandler() {
-        if (window.scrollY > 0) {
-          _this3.spinValue += _this3.spinValue < _this3.sections.length - 1 ? 1 : 0;
-        } else {
-          _this3.spinValue -= _this3.spinValue > 0 ? 1 : 0;
-        }
-
-        _this3.scrollContent();
-
-        console.log('scrolled');
-        console.log('window.scrollY: ', window.scrollY);
-      };
-
-      document.addEventListener('scroll', throttle(scrollHandler, 1000));
-    } // in progress - end
+    // onScroll() {
+    //   const throttle = (func, delay) => {
+    //     let time = Date.now();
+    //     return function wrapper() {
+    //       if ((time + delay - Date.now()) < 0) {
+    //         func();
+    //         time = Date.now();
+    //       }
+    //     };
+    //   };
+    //   const scrollHandler = () => {
+    //     if (window.scrollY > 0) {
+    //       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+    //     } else {
+    //       this.spinValue -= this.spinValue > 0 ? 1 : 0;
+    //     }
+    //     this.scrollContent();
+    //     console.log('scrolled');
+    //     console.log('window.scrollY: ', window.scrollY);
+    //   };
+    //   document.addEventListener('scroll', throttle(scrollHandler, 1000));
+    // }
+    // in progress - end
 
   }, {
     key: "generateNavigation",
     value: function generateNavigation(dots) {
-      var _this4 = this;
+      var _this3 = this;
 
       if (!dots) {
         return;
@@ -302,7 +288,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        _this4.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
+        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
       this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
@@ -312,9 +298,9 @@ var MyFullPage = /*#__PURE__*/function () {
           _functions.default.removeActiveClass();
 
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this4.spinValue = index;
+          _this3.spinValue = index;
 
-          _this4.scrollContent();
+          _this3.scrollContent();
         });
       });
     }
@@ -387,7 +373,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56767" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57513" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
