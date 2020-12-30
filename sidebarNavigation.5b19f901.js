@@ -151,18 +151,6 @@ exports.default = void 0;
 
 var _consts = require("./_consts");
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 var FUNC = {
   runAtEnd: function runAtEnd() {
     console.log('I run at the end');
@@ -172,46 +160,6 @@ var FUNC = {
   },
   removeActiveClass: function removeActiveClass() {
     document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
-  },
-  // currentSectionCheck: (sections) => {
-  //   function elementInViewport(el) {
-  //     const top = el.offsetTop;
-  //     const left = el.offsetLeft;
-  //     const width = el.offsetWidth;
-  //     const height = el.offsetHeight;
-  //     return (
-  //       top < (window.pageYOffset + window.innerHeight)
-  //       && left < (window.pageXOffset + window.innerWidth)
-  //       && (top + height) > window.pageYOffset
-  //       && (left + width) > window.pageXOffset
-  //     );
-  //   }
-  //   const visibleSectionCheck = [...sections].map((section) => elementInViewport(section));
-  //   console.log(visibleSectionCheck);
-  //   return visibleSectionCheck.indexOf(true);
-  // },
-  isInViewport: function isInViewport(elements) {
-    var checkCurrentElement = function checkCurrentElement(elem) {
-      var bounding = elem.getBoundingClientRect(); // console.log(bounding.bottom);
-      // console.log('bounding: ', bounding);
-      // console.log('Height: ', document.body.scrollHeight);
-      // console.log('result: ', bounding.bottom - (document.body.scrollHeight / elements.length));
-
-      var currentSectionCheck = bounding.bottom - document.body.scrollHeight / elements.length;
-      return currentSectionCheck; // return (
-      //   (bounding.top >= 0 && bounding.bottom >= 0)
-      //   // && bounding.left >= 0
-      //   && bounding.top <= (window.innerHeight || document.documentElement.clientHeight)
-      //   // && bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
-      // );
-    };
-
-    var visibleElementCheck = _toConsumableArray(elements).map(function (element) {
-      return checkCurrentElement(element);
-    }); // console.log(visibleElementCheck);
-
-
-    return visibleElementCheck.indexOf(0);
   }
 };
 var _default = FUNC;
@@ -238,7 +186,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sections = config.sections || _consts.DOM.sections;
     this.duration = config.duration || _consts.DEFAULT_DURATION;
     this.parent = config.parent || _consts.DOM.parent;
-    this.spinValue = config.spinValue || _functions.default.isInViewport(this.sections);
+    this.spinValue = config.spinValue || 0;
     this.canScroll = config.canScroll || true;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
@@ -247,7 +195,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.onMouseWheel();
     this.setAnimationDuration(this.duration);
     this.generateNavigation(this.dots);
-    this.currentScrollY = window.scrollY;
+    this.onScroll(); // this.currentScrollTop = window.scrollY;
   }
 
   _createClass(MyFullPage, [{
@@ -294,7 +242,7 @@ var MyFullPage = /*#__PURE__*/function () {
         return wrapper;
       };
 
-      var scrollHandler = function scrollHandler(event) {
+      var wheelHandler = function wheelHandler(event) {
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
         } else {
@@ -302,27 +250,51 @@ var MyFullPage = /*#__PURE__*/function () {
         }
 
         _this2.scrollContent();
-      }; // working on start
+      };
 
-
-      var touchpadScrollHandler = function touchpadScrollHandler() {
-        console.log('scrolled');
-      }; // working on end
-
-
-      window.addEventListener('wheel', throttle(scrollHandler, this.duration)); // working on start
-
-      document.addEventListener('scroll', throttle(touchpadScrollHandler, this.duration)); // working on end
+      window.addEventListener('wheel', throttle(wheelHandler, this.duration));
     }
   }, {
     key: "setAnimationDuration",
     value: function setAnimationDuration(duration) {
       this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
-    }
+    } // in progress - start
+
+  }, {
+    key: "onScroll",
+    value: function onScroll() {
+      var _this3 = this;
+
+      var throttle = function throttle(func, delay) {
+        var time = Date.now();
+        return function wrapper() {
+          if (time + delay - Date.now() < 0) {
+            func();
+            time = Date.now();
+          }
+        };
+      };
+
+      var scrollHandler = function scrollHandler() {
+        if (window.scrollY > 0) {
+          _this3.spinValue += _this3.spinValue < _this3.sections.length - 1 ? 1 : 0;
+        } else {
+          _this3.spinValue -= _this3.spinValue > 0 ? 1 : 0;
+        }
+
+        _this3.scrollContent();
+
+        console.log('scrolled');
+        console.log('window.scrollY: ', window.scrollY);
+      };
+
+      document.addEventListener('scroll', throttle(scrollHandler, 1000));
+    } // in progress - end
+
   }, {
     key: "generateNavigation",
     value: function generateNavigation(dots) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!dots) {
         return;
@@ -330,7 +302,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
+        _this4.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
       this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
@@ -340,9 +312,9 @@ var MyFullPage = /*#__PURE__*/function () {
           _functions.default.removeActiveClass();
 
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this3.spinValue = index;
+          _this4.spinValue = index;
 
-          _this3.scrollContent();
+          _this4.scrollContent();
         });
       });
     }
@@ -415,7 +387,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55965" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56767" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
