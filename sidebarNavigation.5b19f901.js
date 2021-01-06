@@ -243,7 +243,10 @@ var MyFullPage = /*#__PURE__*/function () {
       };
 
       var wheelHandler = function wheelHandler(event) {
-        console.log('wheel');
+        event.preventDefault(); // last time was added
+
+        console.log(event.wheelDelta);
+        console.log(event.deltaY);
 
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
@@ -251,10 +254,12 @@ var MyFullPage = /*#__PURE__*/function () {
           _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
         }
 
-        throttle(_this2.scrollContent(), _this2.duration);
+        _this2.scrollContent();
       };
 
-      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
+      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), {
+        passive: false
+      }); // working start
 
       document.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
@@ -265,8 +270,7 @@ var MyFullPage = /*#__PURE__*/function () {
         event.preventDefault();
       }, {
         passive: false
-      }); // not needed? due to Passive event listeners
-
+      });
       document.addEventListener('scroll', function () {
         console.log('scroll');
       }); // working end
@@ -395,7 +399,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49580" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52363" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
