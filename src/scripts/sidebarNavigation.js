@@ -72,7 +72,7 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
+    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), { passive: false });
 
     // working start
 

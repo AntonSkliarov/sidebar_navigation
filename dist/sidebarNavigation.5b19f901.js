@@ -254,7 +254,9 @@ var MyFullPage = /*#__PURE__*/function () {
         _this2.scrollContent();
       };
 
-      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
+      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), {
+        passive: false
+      }); // working start
 
       document.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
@@ -389,7 +391,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64841" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64919" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
