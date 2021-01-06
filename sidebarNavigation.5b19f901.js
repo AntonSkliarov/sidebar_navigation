@@ -243,6 +243,8 @@ var MyFullPage = /*#__PURE__*/function () {
       };
 
       var wheelHandler = function wheelHandler(event) {
+        event.preventDefault();
+
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
         } else {
@@ -252,17 +254,20 @@ var MyFullPage = /*#__PURE__*/function () {
         _this2.scrollContent();
       };
 
-      window.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
+      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), {
+        passive: false
+      }); // working start
 
-      window.addEventListener('touchstart', function (event) {
+      document.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
       });
       var handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-      window.addEventListener('touchend', handleTouchEnd);
-      window.addEventListener('touchmove', function (event) {
-        event.preventDefault();
-      });
-      window.addEventListener('scroll', function () {
+      document.addEventListener('touchend', handleTouchEnd); // document.addEventListener('touchmove', (event) => {
+      //   event.preventDefault();
+      // });
+      // not needed? due to Passive event listeners
+
+      document.addEventListener('scroll', function () {
         console.log('scroll');
       }); // working end
     } // working start
@@ -386,7 +391,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63479" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64919" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
