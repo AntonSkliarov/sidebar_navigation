@@ -6,7 +6,7 @@ import {
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
-const debounce = require('debounce');
+// const debounce = require('debounce');
 
 class MyFullPage {
   constructor(config) {
@@ -22,6 +22,12 @@ class MyFullPage {
 
     this.onMouseWheel();
     this.setAnimationDuration(this.duration);
+
+    // working start
+    this.startY = undefined;
+    this.pagesNum = this.sections.length;
+    this.currentPosition = 0;
+    // working end
   }
 
   scrollContent() {
@@ -43,6 +49,19 @@ class MyFullPage {
   }
 
   onMouseWheel() {
+    const throttle = (method, context, delay) => {
+      let wait = false;
+      return function wrapper(...args) {
+        if (!wait) {
+          method.apply(context, args);
+          wait = true;
+          setTimeout(() => {
+            wait = false;
+          }, delay);
+        }
+      };
+    };
+
     const wheelHandler = (event) => {
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
@@ -53,8 +72,52 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    window.addEventListener('wheel', debounce(wheelHandler, this.duration));
+    window.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
+
+    // working start
+
+    document.addEventListener('touchstart', (event) => {
+      this.startY = event.touches[0].pageY;
+      // console.log(this);
+    });
+    const handleTouchEnd = throttle(this.touchEnd, this, this.duration);
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchmove', (event) => {
+      event.preventDefault();
+    });
+
+    // working end
   }
+  // working start
+
+  touchEnd(event) {
+    const endY = event.changedTouches[0].pageY;
+    console.log(this);
+    if (endY - this.startY < 0) {
+      // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
+      this.goDown();
+    } else {
+      // Проведите пальцем вниз, прокрутите соответствующую страницу вверх
+      this.goUp();
+    }
+  }
+
+  goDown() {
+    // Страница прокручивается вниз только тогда, когда есть страницы внизу страницы
+    if (-this.parent.offsetTop <= this.viewHeight * (this.pagesNum - 2)) {
+      // Повторно укажите currentPosition текущей страницы из верхней части представления,
+      // чтобы обеспечить полноэкранную прокрутку.CurrentPosition - отрицательное значение,
+      // и чем меньше значение, тем больше часть за верхним
+      this.this.currentPosition -= this.viewHeight;
+
+      this.turnPage(this.currentPosition);
+      this.changeNavStyle(this.currentPosition);
+
+      // Обработка пользовательских функций
+      // this.options.definePages();
+    }
+  }
+  // working end
 
   setAnimationDuration(duration) {
     this.parent.style.transition = `transform ${duration}ms ease-out`;

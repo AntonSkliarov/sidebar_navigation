@@ -117,259 +117,160 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"helpers/_consts.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DEFAULT_DURATION = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
-var CLASSES = {
-  sidebarNav: 'sidebar-nav',
-  sidebarNavButton: 'sidebar-nav__button',
-  sidebarNavButtonActive: 'sidebar-nav__button_is-active',
-  sidebarNavItem: 'sidebar-nav__item'
-};
-exports.CLASSES = CLASSES;
-var DOM = {
-  parent: document.querySelector('.main-content'),
-  sections: document.querySelectorAll('.section'),
-  sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
-};
-exports.DOM = DOM;
-var VIEWPORT_HEIGHT = 100;
-exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
-var DEFAULT_DURATION = 500;
-exports.DEFAULT_DURATION = DEFAULT_DURATION;
-},{}],"helpers/_functions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _consts = require("./_consts");
-
-var FUNC = {
-  runAtEnd: function runAtEnd() {
-    console.log('I run at the end');
-  },
-  runAtStart: function runAtStart() {
-    console.log('I run at the start');
-  },
-  removeActiveClass: function removeActiveClass() {
-    document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
-  }
-};
-var _default = FUNC;
-exports.default = _default;
-},{"./_consts":"helpers/_consts.js"}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
-"use strict";
-
-var _consts = require("../helpers/_consts");
-
-var _functions = _interopRequireDefault(require("../helpers/_functions"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+})({"scripts/test2.js":[function(require,module,exports) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-// const debounce = require('debounce');
-var MyFullPage = /*#__PURE__*/function () {
-  function MyFullPage(config) {
-    _classCallCheck(this, MyFullPage);
+function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
-    this.sections = config.sections || _consts.DOM.sections;
-    this.duration = config.duration || _consts.DEFAULT_DURATION;
-    this.parent = config.parent || _consts.DOM.parent;
-    this.spinValue = config.spinValue || 0;
-    this.canScroll = config.canScroll || true;
-    this.onEnd = config.onEnd || null;
-    this.onStart = config.onStart || null;
-    this.dots = config.dots || false;
-    this.sectionNavigation = '';
-    this.onMouseWheel();
-    this.setAnimationDuration(this.duration); // working start
+var _renderNav = new WeakSet();
 
-    this.startY = undefined;
-    this.pagesNum = this.sections.length;
-    this.currentPosition = 0; // working end
+var _setActive = new WeakSet();
+
+var _setup = new WeakSet();
+
+var PageScroll = /*#__PURE__*/function () {
+  function PageScroll(selector, opts) {
+    _classCallCheck(this, PageScroll);
+
+    _setup.add(this);
+
+    _setActive.add(this);
+
+    _renderNav.add(this);
+
+    this.$root = document.querySelector(selector);
+    this.$sections = this.$root.querySelectorAll('.section');
+    this.opts = opts;
+    this.$up = null;
+    this.$down = null;
+    this.level = 0;
+    this.bound = this.$sections.length;
+    this.isAnimating = false;
+
+    _classPrivateMethodGet(this, _setup, _setup2).call(this);
   }
 
-  _createClass(MyFullPage, [{
-    key: "scrollContent",
-    value: function scrollContent() {
+  _createClass(PageScroll, [{
+    key: "moveup",
+    value: function moveup() {
       var _this = this;
 
-      if (this.onStart) {
-        this.onStart();
-      }
-
-      this.parent.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
-
-      _functions.default.removeActiveClass();
-
-      this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
-
-      if (this.onEnd) {
+      if (this.level != 0 && !this.isAnimating) {
+        this.isAnimating = true;
+        this.level--;
+        this.$sections.forEach(function (elem) {
+          return elem.style.transform = "translateY(".concat(-_this.level * 100, "%)");
+        });
         setTimeout(function () {
-          _this.onEnd();
-        }, this.duration);
+          _this.isAnimating = false;
+        }, this.opts.animDuration || 300);
+
+        _classPrivateMethodGet(this, _setActive, _setActive2).call(this, this.level);
       }
     }
   }, {
-    key: "onMouseWheel",
-    value: function onMouseWheel() {
+    key: "movedown",
+    value: function movedown() {
       var _this2 = this;
 
-      var throttle = function throttle(method, context, delay) {
-        var wait = false;
-        return function wrapper() {
-          if (!wait) {
-            for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-              args[_key] = arguments[_key];
-            }
+      if (this.level + 1 < this.bound && !this.isAnimating) {
+        this.isAnimating = true;
+        this.level++;
+        this.$sections.forEach(function (elem) {
+          return elem.style.transform = "translateY(".concat(-_this2.level * 100, "%)");
+        });
+        setTimeout(function () {
+          _this2.isAnimating = false;
+        }, this.opts.animDuration || 300);
 
-            method.apply(context, args);
-            wait = true;
-            setTimeout(function () {
-              wait = false;
-            }, delay);
-          }
-        };
-      };
-
-      var wheelHandler = function wheelHandler(event) {
-        if (event.deltaY > 0) {
-          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
-        } else {
-          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
-        }
-
-        _this2.scrollContent();
-      };
-
-      window.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
-
-      document.addEventListener('touchstart', function (event) {
-        _this2.startY = event.touches[0].pageY; // console.log(this);
-      });
-      var handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchmove', function (event) {
-        event.preventDefault();
-      }); // working end
-    } // working start
-
-  }, {
-    key: "touchEnd",
-    value: function touchEnd(event) {
-      var endY = event.changedTouches[0].pageY;
-      console.log(this);
-
-      if (endY - this.startY < 0) {
-        // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
-        this.goDown();
-      } else {
-        // Проведите пальцем вниз, прокрутите соответствующую страницу вверх
-        this.goUp();
+        _classPrivateMethodGet(this, _setActive, _setActive2).call(this, this.level);
       }
     }
   }, {
-    key: "goDown",
-    value: function goDown() {
-      // Страница прокручивается вниз только тогда, когда есть страницы внизу страницы
-      if (-this.parent.offsetTop <= this.viewHeight * (this.pagesNum - 2)) {
-        // Повторно укажите currentPosition текущей страницы из верхней части представления,
-        // чтобы обеспечить полноэкранную прокрутку.CurrentPosition - отрицательное значение,
-        // и чем меньше значение, тем больше часть за верхним
-        this.this.currentPosition -= this.viewHeight;
-        this.turnPage(this.currentPosition);
-        this.changeNavStyle(this.currentPosition); // Обработка пользовательских функций
-        // this.options.definePages();
-      }
-    } // working end
-
-  }, {
-    key: "setAnimationDuration",
-    value: function setAnimationDuration(duration) {
-      this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
-    }
-  }, {
-    key: "generateNavigation",
-    value: function generateNavigation() {
+    key: "moveto",
+    value: function moveto(pos) {
       var _this3 = this;
 
-      if (!this.dots) {
-        return;
-      }
-
-      document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
-      this.sections.forEach(function (section) {
-        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
-      });
-      document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
-      this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
-      this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
-      this.buttons.forEach(function (button, index) {
-        button.addEventListener('click', function () {
-          _functions.default.removeActiveClass();
-
-          button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this3.spinValue = index;
-
-          _this3.scrollContent();
+      if (pos >= 0 && pos <= this.bound) {
+        var movingTo = this.level - pos;
+        console.log(movingTo * 100);
+        this.$sections.forEach(function (elem) {
+          return elem.style.transform = "translateY(".concat((movingTo - _this3.level) * 100, "%)");
         });
-      });
-    }
-  }, {
-    key: "on",
-    value: function on(point, func) {
-      switch (point) {
-        case 'end':
-          this.onEnd = func;
-          break;
-
-        case 'start':
-          this.onStart = func;
-          break;
-
-        default:
-          this.onEnd = null;
-          this.onStart = null;
+        this.level = pos;
       }
-    }
-  }, {
-    key: "goTo",
-    value: function goTo(sectionNumber) {
-      this.spinValue = sectionNumber;
-      this.scrollContent();
     }
   }]);
 
-  return MyFullPage;
+  return PageScroll;
 }();
 
-var config = {
-  sections: null,
-  duration: 1000,
-  parent: null,
-  spinValue: null,
-  canScroll: null,
-  onEnd: null,
-  onStart: null,
-  dots: true
+var _renderNav2 = function _renderNav2() {
+  var arrows = "<svg id='control-up' width=\"40\" height=\"35\" viewBox=\"0 0 40 35\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path d=\"M17.4019 1.5C18.5566 -0.5 21.4434 -0.5 22.5981 1.5L39.0526 30C40.2073 32 38.7639 34.5 36.4545 34.5H3.54552C1.23612 34.5 -0.207259 32 0.947441 30L17.4019 1.5Z\" fill=\"".concat(this.opts.controlColor || 'white', "\"/>\n        </svg>\n        <svg id='control-down' width=\"40\" height=\"35\" viewBox=\"0 0 40 35\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path d=\"M17.4019 1.5C18.5566 -0.5 21.4434 -0.5 22.5981 1.5L39.0526 30C40.2073 32 38.7639 34.5 36.4545 34.5H3.54552C1.23612 34.5 -0.207259 32 0.947441 30L17.4019 1.5Z\" fill=\"").concat(this.opts.controlColor || 'white', "\"/>\n        </svg>\n        ");
+  var container = document.createElement("div");
+  container.id = container.classList = 'controllers';
+  container.innerHTML = arrows;
+  this.$root.appendChild(container);
 };
-var newNavigation = new MyFullPage(config);
-newNavigation.generateNavigation();
-newNavigation.on('end', _functions.default.runAtEnd);
-newNavigation.on('start', _functions.default.runAtStart); // newNavigation.goTo(0);
-},{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+var _setActive2 = function _setActive2(index) {
+  this.opts.nav[index].classList.add('active-link');
+
+  for (var j = 0; j < this.opts.nav.length; j++) {
+    if (index != j) {
+      this.opts.nav[j].classList.remove('active-link');
+    }
+  }
+};
+
+var _setup2 = function _setup2() {
+  var _this4 = this;
+
+  _classPrivateMethodGet(this, _renderNav, _renderNav2).call(this);
+
+  this.$up = document.querySelector('#control-up');
+  this.$down = document.querySelector('#control-down');
+  this.$sections.forEach(function (elem) {
+    return elem.style.transition = "transform ".concat(+_this4.opts.animDuration / 1000 + 's' || '0.3s');
+  });
+  this.$sections.forEach(function (elem) {
+    return elem.style.transitionTimingFunction = _this4.opts.easing ? _this4.opts.easing : 'linear';
+  });
+  this.moveup = this.moveup.bind(this);
+  this.movedown = this.movedown.bind(this);
+  this.$up.addEventListener('click', this.moveup);
+  this.$down.addEventListener('click', this.movedown);
+  this.$root.addEventListener('wheel', function (event) {
+    if (event.deltaY > 0) _this4.movedown();else _this4.moveup();
+  });
+
+  if (this.opts.nav) {
+    var _loop = function _loop(i) {
+      _this4.opts.nav[i].addEventListener('click', function () {
+        _this4.moveto(i);
+
+        _classPrivateMethodGet(_this4, _setActive, _setActive2).call(_this4, i);
+      });
+    };
+
+    for (var i = 0; i < this.opts.nav.length; i++) {
+      _loop(i);
+    }
+  }
+};
+
+new PageScroll('.main-content', {
+  animDuration: 1000,
+  // 2 seconds
+  // easing: 'cubic-bezier(.17,.67,.83,.67)', //animation easing
+  controlColor: '#ccc' // color of navigation arrows
+
+});
+},{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -397,7 +298,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50716" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54844" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -573,5 +474,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/sidebarNavigation.js"], null)
-//# sourceMappingURL=/sidebarNavigation.5b19f901.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/test2.js"], null)
+//# sourceMappingURL=/test2.1318fd07.js.map
