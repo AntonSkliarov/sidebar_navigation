@@ -62,17 +62,21 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
-      event.preventDefault(); // last time was added
-      console.log(event.wheelDelta);
-      console.log(event.deltaY);
+      if (this.canScroll) {
+        this.canScroll = false;
 
-      if (event.deltaY > 0) {
-        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-      } else {
-        this.spinValue -= this.spinValue > 0 ? 1 : 0;
+        if (event.deltaY > 0) {
+          this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+        } else {
+          this.spinValue -= this.spinValue > 0 ? 1 : 0;
+        }
+
+        this.scrollContent();
       }
 
-      this.scrollContent();
+      setTimeout(() => {
+        this.canScroll = true;
+      }, this.duration);
     };
 
     document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), { passive: false });
