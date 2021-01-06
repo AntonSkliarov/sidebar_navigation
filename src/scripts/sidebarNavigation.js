@@ -61,6 +61,7 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
+      console.log('wheel');
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {

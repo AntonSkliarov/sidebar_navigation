@@ -243,6 +243,8 @@ var MyFullPage = /*#__PURE__*/function () {
       };
 
       var wheelHandler = function wheelHandler(event) {
+        console.log('wheel');
+
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
         } else {
@@ -393,7 +395,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65487" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49326" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
