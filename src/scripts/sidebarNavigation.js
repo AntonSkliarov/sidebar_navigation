@@ -49,6 +49,7 @@ class MyFullPage {
   onMouseWheel() {
     const throttle = (method, context, delay) => {
       let wait = false;
+
       return function wrapper(...args) {
         if (!wait) {
           method.apply(context, args);
@@ -61,17 +62,20 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
-      console.log('wheel');
+      event.preventDefault(); // last time was added
+      console.log(event.wheelDelta);
+      console.log(event.deltaY);
+
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
       }
 
-      throttle(this.scrollContent(), this.duration);
+      this.scrollContent();
     };
 
-    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
+    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), { passive: false });
 
     // working start
 
@@ -83,7 +87,6 @@ class MyFullPage {
     document.addEventListener('touchmove', (event) => {
       event.preventDefault();
     }, { passive: false });
-    // not needed? due to Passive event listeners
 
     document.addEventListener('scroll', () => {
       console.log('scroll');
