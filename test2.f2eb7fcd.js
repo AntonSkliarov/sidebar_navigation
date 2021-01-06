@@ -117,244 +117,79 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"helpers/_consts.js":[function(require,module,exports) {
-"use strict";
+})({"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DEFAULT_DURATION = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
-var CLASSES = {
-  sidebarNav: 'sidebar-nav',
-  sidebarNavButton: 'sidebar-nav__button',
-  sidebarNavButtonActive: 'sidebar-nav__button_is-active',
-  sidebarNavItem: 'sidebar-nav__item'
-};
-exports.CLASSES = CLASSES;
-var DOM = {
-  parent: document.querySelector('.main-content'),
-  sections: document.querySelectorAll('.section'),
-  sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
-};
-exports.DOM = DOM;
-var VIEWPORT_HEIGHT = 100;
-exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
-var DEFAULT_DURATION = 500;
-exports.DEFAULT_DURATION = DEFAULT_DURATION;
-},{}],"helpers/_functions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _consts = require("./_consts");
-
-var FUNC = {
-  runAtEnd: function runAtEnd() {
-    console.log('I run at the end');
-  },
-  runAtStart: function runAtStart() {
-    console.log('I run at the start');
-  },
-  removeActiveClass: function removeActiveClass() {
-    document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
-  }
-};
-var _default = FUNC;
-exports.default = _default;
-},{"./_consts":"helpers/_consts.js"}],"scripts/sidebarNavigation.js":[function(require,module,exports) {
-"use strict";
-
-var _consts = require("../helpers/_consts");
-
-var _functions = _interopRequireDefault(require("../helpers/_functions"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-// const debounce = require('debounce');
-var MyFullPage = /*#__PURE__*/function () {
-  function MyFullPage(config) {
-    _classCallCheck(this, MyFullPage);
-
-    this.sections = config.sections || _consts.DOM.sections;
-    this.duration = config.duration || _consts.DEFAULT_DURATION;
-    this.parent = config.parent || _consts.DOM.parent;
-    this.spinValue = config.spinValue || 0;
-    this.canScroll = config.canScroll || true;
-    this.onEnd = config.onEnd || null;
-    this.onStart = config.onStart || null;
-    this.dots = config.dots || false;
-    this.sectionNavigation = '';
-    this.onMouseWheel();
-    this.setAnimationDuration(this.duration); // working start
-
-    this.startY = undefined; // working end
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
   }
 
-  _createClass(MyFullPage, [{
-    key: "scrollContent",
-    value: function scrollContent() {
-      var _this = this;
+  return bundleURL;
+}
 
-      if (this.onStart) {
-        this.onStart();
-      }
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
 
-      this.parent.style.transform = "translateY(-".concat(this.spinValue * _consts.VIEWPORT_HEIGHT, "vh)");
-
-      _functions.default.removeActiveClass();
-
-      this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
-
-      if (this.onEnd) {
-        setTimeout(function () {
-          _this.onEnd();
-        }, this.duration);
-      }
+    if (matches) {
+      return getBaseURL(matches[0]);
     }
-  }, {
-    key: "onMouseWheel",
-    value: function onMouseWheel() {
-      var _this2 = this;
+  }
 
-      var throttle = function throttle(method, context, delay) {
-        var wait = false;
-        return function wrapper() {
-          if (!wait) {
-            for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-              args[_key] = arguments[_key];
-            }
+  return '/';
+}
 
-            method.apply(context, args);
-            wait = true;
-            setTimeout(function () {
-              wait = false;
-            }, delay);
-          }
-        };
-      };
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
 
-      var wheelHandler = function wheelHandler(event) {
-        if (event.deltaY > 0) {
-          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
-        } else {
-          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
-        }
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
 
-        _this2.scrollContent();
-      };
+function updateLink(link) {
+  var newLink = link.cloneNode();
 
-      window.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
+  newLink.onload = function () {
+    link.remove();
+  };
 
-      document.addEventListener('touchstart', function (event) {
-        _this2.startY = event.touches[0].pageY;
-      });
-      var handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchmove', function (event) {
-        event.preventDefault();
-      }); // working end
-    } // working start
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
 
-  }, {
-    key: "touchEnd",
-    value: function touchEnd(event) {
-      var endY = event.changedTouches[0].pageY;
+var cssTimeout = null;
 
-      if (endY - this.startY < 0) {
-        // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
-        this.spinValue += this.spinValue < this.sections.length - 1 ? 1 : 0;
-        this.scrollContent();
-      } else {
-        // Проведите пальцем вниз, прокрутите соответствующую страницу вверх
-        this.spinValue -= this.spinValue > 0 ? 1 : 0;
-        this.scrollContent();
-      }
-    } // working end
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
 
-  }, {
-    key: "setAnimationDuration",
-    value: function setAnimationDuration(duration) {
-      this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
-    }
-  }, {
-    key: "generateNavigation",
-    value: function generateNavigation() {
-      var _this3 = this;
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
 
-      if (!this.dots) {
-        return;
-      }
-
-      document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
-      this.sections.forEach(function (section) {
-        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
-      });
-      document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
-      this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
-      this.buttons[this.spinValue].classList.add(_consts.CLASSES.sidebarNavButtonActive);
-      this.buttons.forEach(function (button, index) {
-        button.addEventListener('click', function () {
-          _functions.default.removeActiveClass();
-
-          button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this3.spinValue = index;
-
-          _this3.scrollContent();
-        });
-      });
-    }
-  }, {
-    key: "on",
-    value: function on(point, func) {
-      switch (point) {
-        case 'end':
-          this.onEnd = func;
-          break;
-
-        case 'start':
-          this.onStart = func;
-          break;
-
-        default:
-          this.onEnd = null;
-          this.onStart = null;
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
       }
     }
-  }, {
-    key: "goTo",
-    value: function goTo(sectionNumber) {
-      this.spinValue = sectionNumber;
-      this.scrollContent();
-    }
-  }]);
 
-  return MyFullPage;
-}();
+    cssTimeout = null;
+  }, 50);
+}
 
-var config = {
-  sections: null,
-  duration: 1000,
-  parent: null,
-  spinValue: null,
-  canScroll: null,
-  onEnd: null,
-  onStart: null,
-  dots: true
-};
-var newNavigation = new MyFullPage(config);
-newNavigation.generateNavigation();
-newNavigation.on('end', _functions.default.runAtEnd);
-newNavigation.on('start', _functions.default.runAtStart); // newNavigation.goTo(0);
-},{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"styles/test2.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -382,7 +217,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50716" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54844" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -558,5 +393,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","scripts/sidebarNavigation.js"], null)
-//# sourceMappingURL=/sidebarNavigation.5b19f901.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/test2.f2eb7fcd.js.map
