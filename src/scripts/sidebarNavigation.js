@@ -25,8 +25,6 @@ class MyFullPage {
 
     // working start
     this.startY = undefined;
-    this.pagesNum = this.sections.length;
-    this.currentPosition = 0;
     // working end
   }
 
@@ -78,7 +76,6 @@ class MyFullPage {
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
-      // console.log(this);
     });
     const handleTouchEnd = throttle(this.touchEnd, this, this.duration);
     document.addEventListener('touchend', handleTouchEnd);
@@ -92,29 +89,14 @@ class MyFullPage {
 
   touchEnd(event) {
     const endY = event.changedTouches[0].pageY;
-    console.log(this);
     if (endY - this.startY < 0) {
       // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
-      this.goDown();
+      this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+      this.scrollContent();
     } else {
       // Проведите пальцем вниз, прокрутите соответствующую страницу вверх
-      this.goUp();
-    }
-  }
-
-  goDown() {
-    // Страница прокручивается вниз только тогда, когда есть страницы внизу страницы
-    if (-this.parent.offsetTop <= this.viewHeight * (this.pagesNum - 2)) {
-      // Повторно укажите currentPosition текущей страницы из верхней части представления,
-      // чтобы обеспечить полноэкранную прокрутку.CurrentPosition - отрицательное значение,
-      // и чем меньше значение, тем больше часть за верхним
-      this.this.currentPosition -= this.viewHeight;
-
-      this.turnPage(this.currentPosition);
-      this.changeNavStyle(this.currentPosition);
-
-      // Обработка пользовательских функций
-      // this.options.definePages();
+      this.spinValue -= this.spinValue > 0 ? 1 : 0;
+      this.scrollContent();
     }
   }
   // working end
