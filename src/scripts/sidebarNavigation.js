@@ -61,8 +61,6 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
-      event.preventDefault();
-
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
@@ -72,7 +70,7 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), { passive: false });
+    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
 
     // working start
 
@@ -81,9 +79,9 @@ class MyFullPage {
     });
     const handleTouchEnd = throttle(this.touchEnd, this, this.duration);
     document.addEventListener('touchend', handleTouchEnd);
-    // document.addEventListener('touchmove', (event) => {
-    //   event.preventDefault();
-    // });
+    document.addEventListener('touchmove', (event) => {
+      event.preventDefault();
+    }, { passive: false });
     // not needed? due to Passive event listeners
 
     document.addEventListener('scroll', () => {
@@ -97,12 +95,16 @@ class MyFullPage {
   touchEnd(event) {
     const endY = event.changedTouches[0].pageY;
     console.log('touchEnd');
+    if (endY - this.startY === 0) {
+      return;
+    }
+
     if (endY - this.startY < 0) {
-      // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
+      // Scroll down by fingers
       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       this.scrollContent();
     } else {
-      // Проведите пальцем вниз, прокрутите соответствующую страницу вверх
+      // Scroll up by fingers
       this.spinValue -= this.spinValue > 0 ? 1 : 0;
       this.scrollContent();
     }

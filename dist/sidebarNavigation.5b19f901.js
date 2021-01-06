@@ -243,8 +243,6 @@ var MyFullPage = /*#__PURE__*/function () {
       };
 
       var wheelHandler = function wheelHandler(event) {
-        event.preventDefault();
-
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
         } else {
@@ -254,18 +252,18 @@ var MyFullPage = /*#__PURE__*/function () {
         _this2.scrollContent();
       };
 
-      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), {
-        passive: false
-      }); // working start
+      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
 
       document.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
       });
       var handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-      document.addEventListener('touchend', handleTouchEnd); // document.addEventListener('touchmove', (event) => {
-      //   event.preventDefault();
-      // });
-      // not needed? due to Passive event listeners
+      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+      }, {
+        passive: false
+      }); // not needed? due to Passive event listeners
 
       document.addEventListener('scroll', function () {
         console.log('scroll');
@@ -278,12 +276,16 @@ var MyFullPage = /*#__PURE__*/function () {
       var endY = event.changedTouches[0].pageY;
       console.log('touchEnd');
 
+      if (endY - this.startY === 0) {
+        return;
+      }
+
       if (endY - this.startY < 0) {
-        // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
+        // Scroll down by fingers
         this.spinValue += this.spinValue < this.sections.length - 1 ? 1 : 0;
         this.scrollContent();
       } else {
-        // Проведите пальцем вниз, прокрутите соответствующую страницу вверх
+        // Scroll up by fingers
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
         this.scrollContent();
       }
@@ -391,7 +393,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64919" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65487" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
