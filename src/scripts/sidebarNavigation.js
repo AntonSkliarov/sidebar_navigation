@@ -68,7 +68,7 @@ class MyFullPage {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
       }
 
-      this.scrollContent();
+      throttle(this.scrollContent(), this.duration);
     };
 
     document.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
