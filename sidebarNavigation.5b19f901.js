@@ -261,6 +261,9 @@ var MyFullPage = /*#__PURE__*/function () {
       document.addEventListener('touchend', handleTouchEnd);
       document.addEventListener('touchmove', function (event) {
         event.preventDefault();
+      });
+      document.addEventListener('scroll', function () {
+        console.log('scroll');
       }); // working end
     } // working start
 
@@ -268,6 +271,7 @@ var MyFullPage = /*#__PURE__*/function () {
     key: "touchEnd",
     value: function touchEnd(event) {
       var endY = event.changedTouches[0].pageY;
+      console.log('touchEnd');
 
       if (endY - this.startY < 0) {
         // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
@@ -382,7 +386,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50716" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54824" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
