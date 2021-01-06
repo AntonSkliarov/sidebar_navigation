@@ -83,12 +83,17 @@ class MyFullPage {
       event.preventDefault();
     });
 
+    document.addEventListener('scroll', () => {
+      console.log('scroll');
+    });
+
     // working end
   }
   // working start
 
   touchEnd(event) {
     const endY = event.changedTouches[0].pageY;
+    console.log('touchEnd');
     if (endY - this.startY < 0) {
       // Проведите пальцем вверх, прокрутите соответствующую страницу вниз
       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
