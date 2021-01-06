@@ -74,16 +74,16 @@ class MyFullPage {
 
     // working start
 
-    document.addEventListener('touchstart', (event) => {
+    window.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
     });
     const handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-    document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchmove', (event) => {
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchmove', (event) => {
       event.preventDefault();
     });
 
-    document.addEventListener('scroll', () => {
+    window.addEventListener('scroll', () => {
       console.log('scroll');
     });
 

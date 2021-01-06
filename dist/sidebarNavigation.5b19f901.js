@@ -254,15 +254,15 @@ var MyFullPage = /*#__PURE__*/function () {
 
       window.addEventListener('wheel', throttle(wheelHandler, this, this.duration)); // working start
 
-      document.addEventListener('touchstart', function (event) {
+      window.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
       });
       var handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchmove', function (event) {
+      window.addEventListener('touchend', handleTouchEnd);
+      window.addEventListener('touchmove', function (event) {
         event.preventDefault();
       });
-      document.addEventListener('scroll', function () {
+      window.addEventListener('scroll', function () {
         console.log('scroll');
       }); // working end
     } // working start
@@ -386,7 +386,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54824" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63479" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
