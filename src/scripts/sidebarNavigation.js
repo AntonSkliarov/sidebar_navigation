@@ -61,6 +61,8 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
+      event.preventDefault();
+
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
@@ -70,20 +72,21 @@ class MyFullPage {
       this.scrollContent();
     };
 
-    window.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
+    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration));
 
     // working start
 
-    window.addEventListener('touchstart', (event) => {
+    document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
     });
     const handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-    window.addEventListener('touchend', handleTouchEnd);
-    window.addEventListener('touchmove', (event) => {
-      event.preventDefault();
-    });
+    document.addEventListener('touchend', handleTouchEnd);
+    // document.addEventListener('touchmove', (event) => {
+    //   event.preventDefault();
+    // });
+    // not needed? due to Passive event listeners
 
-    window.addEventListener('scroll', () => {
+    document.addEventListener('scroll', () => {
       console.log('scroll');
     });
 
