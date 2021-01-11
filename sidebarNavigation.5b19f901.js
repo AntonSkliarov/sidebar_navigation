@@ -160,6 +160,22 @@ var FUNC = {
   },
   removeActiveClass: function removeActiveClass() {
     document.querySelector(".".concat(_consts.CLASSES.sidebarNavButtonActive)).classList.remove(_consts.CLASSES.sidebarNavButtonActive);
+  },
+  throttle: function throttle(method, context, delay) {
+    var wait = false;
+    return function wrapper() {
+      if (!wait) {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        method.apply(context, args);
+        wait = true;
+        setTimeout(function () {
+          wait = false;
+        }, delay);
+      }
+    };
   }
 };
 var _default = FUNC;
@@ -188,15 +204,13 @@ var MyFullPage = /*#__PURE__*/function () {
     this.duration = config.duration || _consts.DEFAULT_DURATION;
     this.parent = config.parent || _consts.DOM.parent;
     this.spinValue = config.spinValue || 0;
-    this.canScroll = config.canScroll || true;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
     this.dots = config.dots || false;
     this.sectionNavigation = '';
-    this.onMouseWheel();
-    this.setAnimationDuration(this.duration); // working start
-
-    this.startY = undefined; // working end
+    this.startY = undefined;
+    this.initializeScroll();
+    this.setAnimationDuration(this.duration);
   }
 
   _createClass(MyFullPage, [{
@@ -221,82 +235,54 @@ var MyFullPage = /*#__PURE__*/function () {
       }
     }
   }, {
-    key: "onMouseWheel",
-    value: function onMouseWheel() {
-      var _this2 = this;
+    key: "wheelHandler",
+    value: function wheelHandler(event) {
+      if (event.deltaY > 0) {
+        this.spinValue += this.spinValue < this.sections.length - 1 ? 1 : 0;
+      } else {
+        this.spinValue -= this.spinValue > 0 ? 1 : 0;
+      }
 
-      var throttle = function throttle(method, context, delay) {
-        var wait = false;
-        return function wrapper() {
-          if (!wait) {
-            for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-              args[_key] = arguments[_key];
-            }
-
-            method.apply(context, args);
-            wait = true;
-            setTimeout(function () {
-              wait = false;
-            }, delay);
-          }
-        };
-      };
-
-      var wheelHandler = function wheelHandler(event) {
-        event.preventDefault(); // last time was added
-
-        console.log(event.wheelDelta);
-        console.log(event.deltaY);
-
-        if (event.deltaY > 0) {
-          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
-        } else {
-          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
-        }
-
-        _this2.scrollContent();
-      };
-
-      document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), {
-        passive: false
-      }); // working start
-
-      document.addEventListener('touchstart', function (event) {
-        _this2.startY = event.touches[0].pageY;
-      });
-      var handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchmove', function (event) {
-        event.preventDefault();
-      }, {
-        passive: false
-      });
-      document.addEventListener('scroll', function () {
-        console.log('scroll');
-      }); // working end
-    } // working start
-
+      this.scrollContent();
+    }
   }, {
     key: "touchEnd",
     value: function touchEnd(event) {
       var endY = event.changedTouches[0].pageY;
-      console.log('touchEnd');
 
       if (endY - this.startY === 0) {
         return;
       }
 
       if (endY - this.startY < 0) {
-        // Scroll down by fingers
         this.spinValue += this.spinValue < this.sections.length - 1 ? 1 : 0;
         this.scrollContent();
       } else {
-        // Scroll up by fingers
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
         this.scrollContent();
       }
-    } // working end
+    }
+  }, {
+    key: "initializeScroll",
+    value: function initializeScroll() {
+      var _this2 = this;
 
+      document.addEventListener('wheel', _functions.default.throttle(this.wheelHandler, this, this.duration), {
+        passive: false
+      });
+      document.addEventListener('touchstart', function (event) {
+        _this2.startY = event.touches[0].pageY;
+      });
+
+      var handleTouchEnd = _functions.default.throttle(this.touchEnd, this, this.duration);
+
+      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+      }, {
+        passive: false
+      });
+    }
   }, {
     key: "setAnimationDuration",
     value: function setAnimationDuration(duration) {
@@ -362,7 +348,6 @@ var config = {
   duration: 1000,
   parent: null,
   spinValue: null,
-  canScroll: null,
   onEnd: null,
   onStart: null,
   dots: true
@@ -370,7 +355,8 @@ var config = {
 var newNavigation = new MyFullPage(config);
 newNavigation.generateNavigation();
 newNavigation.on('end', _functions.default.runAtEnd);
-newNavigation.on('start', _functions.default.runAtStart); // newNavigation.goTo(0);
+newNavigation.on('start', _functions.default.runAtStart);
+newNavigation.goTo(0);
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -399,7 +385,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52363" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54135" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
