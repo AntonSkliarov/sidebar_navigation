@@ -14,18 +14,14 @@ class MyFullPage {
     this.duration = config.duration || DEFAULT_DURATION;
     this.parent = config.parent || DOM.parent;
     this.spinValue = config.spinValue || 0;
-    this.canScroll = config.canScroll || true;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
     this.dots = config.dots || false;
     this.sectionNavigation = '';
-
-    this.onMouseWheel();
-    this.setAnimationDuration(this.duration);
-
-    // working start
     this.startY = undefined;
-    // working end
+
+    this.initializeScroll();
+    this.setAnimationDuration(this.duration);
   }
 
   scrollContent() {
@@ -46,78 +42,45 @@ class MyFullPage {
     }
   }
 
-  onMouseWheel() {
-    const throttle = (method, context, delay) => {
-      let wait = false;
+  wheelHandler(event) {
+    if (event.deltaY > 0) {
+      this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+    } else {
+      this.spinValue -= this.spinValue > 0 ? 1 : 0;
+    }
 
-      return function wrapper(...args) {
-        if (!wait) {
-          method.apply(context, args);
-          wait = true;
-          setTimeout(() => {
-            wait = false;
-          }, delay);
-        }
-      };
-    };
-
-    const wheelHandler = (event) => {
-      if (this.canScroll) {
-        this.canScroll = false;
-
-        if (event.deltaY > 0) {
-          this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-        } else {
-          this.spinValue -= this.spinValue > 0 ? 1 : 0;
-        }
-
-        this.scrollContent();
-      }
-
-      setTimeout(() => {
-        this.canScroll = true;
-      }, this.duration);
-    };
-
-    document.addEventListener('wheel', throttle(wheelHandler, this, this.duration), { passive: false });
-
-    // working start
-
-    document.addEventListener('touchstart', (event) => {
-      this.startY = event.touches[0].pageY;
-    });
-    const handleTouchEnd = throttle(this.touchEnd, this, this.duration);
-    document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchmove', (event) => {
-      event.preventDefault();
-    }, { passive: false });
-
-    document.addEventListener('scroll', () => {
-      console.log('scroll');
-    });
-
-    // working end
+    this.scrollContent();
   }
-  // working start
 
   touchEnd(event) {
     const endY = event.changedTouches[0].pageY;
-    console.log('touchEnd');
     if (endY - this.startY === 0) {
       return;
     }
 
     if (endY - this.startY < 0) {
-      // Scroll down by fingers
       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       this.scrollContent();
     } else {
-      // Scroll up by fingers
       this.spinValue -= this.spinValue > 0 ? 1 : 0;
       this.scrollContent();
     }
   }
-  // working end
+
+  initializeScroll() {
+    document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
+
+    document.addEventListener('touchstart', (event) => {
+      this.startY = event.touches[0].pageY;
+    });
+
+    const handleTouchEnd = FUNC.throttle(this.touchEnd, this, this.duration);
+
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchmove', (event) => {
+      event.preventDefault();
+    }, { passive: false });
+  }
 
   setAnimationDuration(duration) {
     this.parent.style.transition = `transform ${duration}ms ease-out`;
@@ -181,7 +144,6 @@ const config = {
   duration: 1000,
   parent: null,
   spinValue: null,
-  canScroll: null,
   onEnd: null,
   onStart: null,
   dots: true,
@@ -191,4 +153,4 @@ const newNavigation = new MyFullPage(config);
 newNavigation.generateNavigation();
 newNavigation.on('end', FUNC.runAtEnd);
 newNavigation.on('start', FUNC.runAtStart);
-// newNavigation.goTo(0);
+newNavigation.goTo(0);
