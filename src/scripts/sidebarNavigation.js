@@ -19,12 +19,29 @@ class MyFullPage {
     this.dots = config.dots || false;
     this.sectionNavigation = '';
     this.startY = undefined;
+    this.canScroll = true;
 
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
+
+    this.prevTime = new Date().getTime();
+
+    setTimeout(() => {
+      this.parent.style.transitionDuration = null;
+      this.parent.style.transform = `translateY(-${this.sections.length * 100}vh)`;
+      setTimeout(() => {
+        this.parent.style.transitionDuration = null;
+        this.parent.style.transform = 'translateY(0)';
+        setTimeout(() => {
+          this.setAnimationDuration(this.duration);
+        }, 30);
+      }, 30);
+    }, 30);
   }
 
   scrollContent() {
+    this.canScroll = true;
+
     if (this.onStart) {
       this.onStart();
     }
@@ -42,16 +59,6 @@ class MyFullPage {
     }
   }
 
-  wheelHandler(event) {
-    if (event.deltaY > 0) {
-      this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-    } else {
-      this.spinValue -= this.spinValue > 0 ? 1 : 0;
-    }
-
-    this.scrollContent();
-  }
-
   touchEnd(event) {
     const endY = event.changedTouches[0].pageY;
     if (endY - this.startY === 0) {
@@ -67,8 +74,37 @@ class MyFullPage {
     }
   }
 
+  wheelHandler(event) {
+    const curTime = new Date().getTime();
+    console.log('current time:', curTime);
+
+    const timeDiff = curTime - this.prevTime;
+    this.prevTime = curTime;
+    console.log('timeDiff:', timeDiff);
+
+    if (!this.canScroll) {
+      return;
+    }
+
+    if (timeDiff < 1000) {
+      return;
+    }
+
+    this.canScroll = false;
+
+    if (event.deltaY > 0) {
+      this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+    } else {
+      this.spinValue -= this.spinValue > 0 ? 1 : 0;
+    }
+
+    this.scrollContent();
+  }
+
   initializeScroll() {
-    document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
+    // document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
+
+    document.addEventListener('wheel', (event) => this.wheelHandler(event), { passive: false });
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
