@@ -76,7 +76,10 @@ class MyFullPage {
 
   // arrow func?
   wheelHandler = (event) => {
+    console.log(event)
+
     document.removeEventListener('wheel', this.wheelHandler);
+
     // const curTime = new Date().getTime();
 
     // const timeDiff = curTime - this.prevTime;
