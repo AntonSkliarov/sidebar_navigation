@@ -74,13 +74,10 @@ class MyFullPage {
     }
   }
 
-  // arrow func?
   wheelHandler = (event) => {
-    console.log(event)
+    console.log(event.deltaY)
 
-    event.preventDefault();
-
-    document.removeEventListener('wheel', this.wheelHandler, { passive: false });
+    document.removeEventListener('wheel', this.wheelHandler);
 
     // const curTime = new Date().getTime();
 
@@ -91,8 +88,7 @@ class MyFullPage {
     //   return;
     // }
 
-    // if (timeDiff < 1000) {
-    //   console.log(timeDiff < 1000);
+    // if (timeDiff < 300) {
     //   return;
     // }
 
@@ -107,12 +103,12 @@ class MyFullPage {
     this.scrollContent();
 
     setTimeout(() => {
-      document.addEventListener('wheel', this.wheelHandler, { passive: false });
-    }, 1000)
+      document.addEventListener('wheel', this.wheelHandler);
+    }, this.duration)
   }
 
   initializeScroll() {
-    document.addEventListener('wheel', this.wheelHandler, { passive: false });
+    document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;

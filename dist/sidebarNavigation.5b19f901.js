@@ -205,18 +205,14 @@ var MyFullPage = /*#__PURE__*/function () {
     _classCallCheck(this, MyFullPage);
 
     _defineProperty(this, "wheelHandler", function (event) {
-      console.log(event);
-      event.preventDefault();
-      document.removeEventListener('wheel', _this.wheelHandler, {
-        passive: false
-      }); // const curTime = new Date().getTime();
+      console.log(event.deltaY);
+      document.removeEventListener('wheel', _this.wheelHandler); // const curTime = new Date().getTime();
       // const timeDiff = curTime - this.prevTime;
       // this.prevTime = curTime;
       // if (!this.canScroll) {
       //   return;
       // }
-      // if (timeDiff < 1000) {
-      //   console.log(timeDiff < 1000);
+      // if (timeDiff < 300) {
       //   return;
       // }
       // this.canScroll = false;
@@ -230,10 +226,8 @@ var MyFullPage = /*#__PURE__*/function () {
       _this.scrollContent();
 
       setTimeout(function () {
-        document.addEventListener('wheel', _this.wheelHandler, {
-          passive: false
-        });
-      }, 1000);
+        document.addEventListener('wheel', _this.wheelHandler);
+      }, _this.duration);
     });
 
     this.sections = config.sections || _consts.DOM.sections;
@@ -300,16 +294,13 @@ var MyFullPage = /*#__PURE__*/function () {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
         this.scrollContent();
       }
-    } // arrow func?
-
+    }
   }, {
     key: "initializeScroll",
     value: function initializeScroll() {
       var _this3 = this;
 
-      document.addEventListener('wheel', this.wheelHandler, {
-        passive: false
-      });
+      document.addEventListener('wheel', this.wheelHandler);
       document.addEventListener('touchstart', function (event) {
         _this3.startY = event.touches[0].pageY;
       });
@@ -425,7 +416,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51425" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52867" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
