@@ -198,6 +198,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 // const debounce = require('debounce');
 var MyFullPage = /*#__PURE__*/function () {
   function MyFullPage(config) {
+    var _this = this;
+
     _classCallCheck(this, MyFullPage);
 
     this.sections = config.sections || _consts.DOM.sections;
@@ -209,14 +211,29 @@ var MyFullPage = /*#__PURE__*/function () {
     this.dots = config.dots || false;
     this.sectionNavigation = '';
     this.startY = undefined;
+    this.canScroll = true;
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
+    this.prevTime = new Date().getTime();
+    setTimeout(function () {
+      _this.parent.style.transitionDuration = null;
+      _this.parent.style.transform = "translateY(-".concat(_this.sections.length * 100, "vh)");
+      setTimeout(function () {
+        _this.parent.style.transitionDuration = null;
+        _this.parent.style.transform = 'translateY(0)';
+        setTimeout(function () {
+          _this.setAnimationDuration(_this.duration);
+        }, 30);
+      }, 30);
+    }, 30);
   }
 
   _createClass(MyFullPage, [{
     key: "scrollContent",
     value: function scrollContent() {
-      var _this = this;
+      var _this2 = this;
+
+      this.canScroll = true;
 
       if (this.onStart) {
         this.onStart();
@@ -230,20 +247,9 @@ var MyFullPage = /*#__PURE__*/function () {
 
       if (this.onEnd) {
         setTimeout(function () {
-          _this.onEnd();
+          _this2.onEnd();
         }, this.duration);
       }
-    }
-  }, {
-    key: "wheelHandler",
-    value: function wheelHandler(event) {
-      if (event.deltaY > 0) {
-        this.spinValue += this.spinValue < this.sections.length - 1 ? 1 : 0;
-      } else {
-        this.spinValue -= this.spinValue > 0 ? 1 : 0;
-      }
-
-      this.scrollContent();
     }
   }, {
     key: "touchEnd",
@@ -263,15 +269,45 @@ var MyFullPage = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "wheelHandler",
+    value: function wheelHandler(event) {
+      var curTime = new Date().getTime();
+      console.log('current time:', curTime);
+      var timeDiff = curTime - this.prevTime;
+      this.prevTime = curTime;
+      console.log('timeDiff:', timeDiff);
+
+      if (!this.canScroll) {
+        return;
+      }
+
+      if (timeDiff < 1000) {
+        return;
+      }
+
+      this.canScroll = false;
+
+      if (event.deltaY > 0) {
+        this.spinValue += this.spinValue < this.sections.length - 1 ? 1 : 0;
+      } else {
+        this.spinValue -= this.spinValue > 0 ? 1 : 0;
+      }
+
+      this.scrollContent();
+    }
+  }, {
     key: "initializeScroll",
     value: function initializeScroll() {
-      var _this2 = this;
+      var _this3 = this;
 
-      document.addEventListener('wheel', _functions.default.throttle(this.wheelHandler, this, this.duration), {
+      // document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
+      document.addEventListener('wheel', function (event) {
+        return _this3.wheelHandler(event);
+      }, {
         passive: false
       });
       document.addEventListener('touchstart', function (event) {
-        _this2.startY = event.touches[0].pageY;
+        _this3.startY = event.touches[0].pageY;
       });
 
       var handleTouchEnd = _functions.default.throttle(this.touchEnd, this, this.duration);
@@ -291,7 +327,7 @@ var MyFullPage = /*#__PURE__*/function () {
   }, {
     key: "generateNavigation",
     value: function generateNavigation() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!this.dots) {
         return;
@@ -299,7 +335,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
+        _this4.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
       this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
@@ -309,9 +345,9 @@ var MyFullPage = /*#__PURE__*/function () {
           _functions.default.removeActiveClass();
 
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this3.spinValue = index;
+          _this4.spinValue = index;
 
-          _this3.scrollContent();
+          _this4.scrollContent();
         });
       });
     }
@@ -385,7 +421,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54135" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52346" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
