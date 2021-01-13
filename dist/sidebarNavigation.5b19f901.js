@@ -303,7 +303,7 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function initializeScroll() {
       var _this3 = this;
 
-      document.addEventListener('wheel', this.wheelHandler);
+      document.addEventListener('wheel', _functions.default.throttle(this.wheelHandler, this, this.duration));
       document.addEventListener('touchstart', function (event) {
         _this3.startY = event.touches[0].pageY;
       });
@@ -419,7 +419,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50799" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51049" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

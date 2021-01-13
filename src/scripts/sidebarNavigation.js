@@ -110,7 +110,7 @@ class MyFullPage {
   }
 
   initializeScroll() {
-    document.addEventListener('wheel', this.wheelHandler);
+    document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration));
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
