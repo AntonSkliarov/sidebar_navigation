@@ -40,8 +40,6 @@ class MyFullPage {
   }
 
   scrollContent() {
-    this.canScroll = true;
-
     if (this.onStart) {
       this.onStart();
     }
@@ -76,12 +74,12 @@ class MyFullPage {
 
   wheelHandler(event) {
     const curTime = new Date().getTime();
-    console.log('current time:', curTime);
 
     const timeDiff = curTime - this.prevTime;
     this.prevTime = curTime;
-    console.log('timeDiff:', timeDiff);
 
+    console.log('timeDiff:', timeDiff);
+    console.log('canScroll:', this.canScroll);
     if (!this.canScroll) {
       return;
     }
@@ -98,13 +96,16 @@ class MyFullPage {
       this.spinValue -= this.spinValue > 0 ? 1 : 0;
     }
 
+    setTimeout(() => {
+      this.canScroll = true;
+    }, 1000);
     this.scrollContent();
   }
 
   initializeScroll() {
-    // document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
-
-    document.addEventListener('wheel', (event) => this.wheelHandler(event), { passive: false });
+    document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
+    // console.log('first canScroll:', this.canScroll);
+    // document.addEventListener('wheel', (event) => this.wheelHandler(event), { passive: false });
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
