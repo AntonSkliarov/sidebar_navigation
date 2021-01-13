@@ -205,6 +205,7 @@ var MyFullPage = /*#__PURE__*/function () {
     _classCallCheck(this, MyFullPage);
 
     _defineProperty(this, "wheelHandler", function (event) {
+      console.log(event);
       document.removeEventListener('wheel', _this.wheelHandler); // const curTime = new Date().getTime();
       // const timeDiff = curTime - this.prevTime;
       // this.prevTime = curTime;
@@ -418,7 +419,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49177" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50799" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
