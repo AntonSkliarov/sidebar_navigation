@@ -40,6 +40,8 @@ class MyFullPage {
   }
 
   scrollContent() {
+    // this.canScroll = true;
+
     if (this.onStart) {
       this.onStart();
     }
@@ -72,23 +74,24 @@ class MyFullPage {
     }
   }
 
-  wheelHandler(event) {
-    const curTime = new Date().getTime();
+  // arrow func?
+  wheelHandler = (event) => {
+    document.removeEventListener('wheel', this.wheelHandler);
+    // const curTime = new Date().getTime();
 
-    const timeDiff = curTime - this.prevTime;
-    this.prevTime = curTime;
+    // const timeDiff = curTime - this.prevTime;
+    // this.prevTime = curTime;
 
-    console.log('timeDiff:', timeDiff);
-    console.log('canScroll:', this.canScroll);
-    if (!this.canScroll) {
-      return;
-    }
+    // if (!this.canScroll) {
+    //   return;
+    // }
 
-    if (timeDiff < 1000) {
-      return;
-    }
+    // if (timeDiff < 1000) {
+    //   console.log(timeDiff < 1000);
+    //   return;
+    // }
 
-    this.canScroll = false;
+    // this.canScroll = false;
 
     if (event.deltaY > 0) {
       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
@@ -96,16 +99,15 @@ class MyFullPage {
       this.spinValue -= this.spinValue > 0 ? 1 : 0;
     }
 
-    setTimeout(() => {
-      this.canScroll = true;
-    }, 1000);
     this.scrollContent();
+
+    setTimeout(() => {
+      document.addEventListener('wheel', this.wheelHandler);;
+    }, 1000)
   }
 
   initializeScroll() {
-    document.addEventListener('wheel', FUNC.throttle(this.wheelHandler, this, this.duration), { passive: false });
-    // console.log('first canScroll:', this.canScroll);
-    // document.addEventListener('wheel', (event) => this.wheelHandler(event), { passive: false });
+    document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
