@@ -205,7 +205,8 @@ var MyFullPage = /*#__PURE__*/function () {
     _classCallCheck(this, MyFullPage);
 
     _defineProperty(this, "wheelHandler", function (event) {
-      console.log(event.deltaY);
+      console.log(_this.sections[_this.spinValue].getBoundingClientRect().top);
+      console.log(document.elementFromPoint(0, 0));
       document.removeEventListener('wheel', _this.wheelHandler); // const curTime = new Date().getTime();
       // const timeDiff = curTime - this.prevTime;
       // this.prevTime = curTime;
@@ -243,17 +244,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
     this.prevTime = new Date().getTime();
-    setTimeout(function () {
-      _this.parent.style.transitionDuration = null;
-      _this.parent.style.transform = "translateY(-".concat(_this.sections.length * 100, "vh)");
-      setTimeout(function () {
-        _this.parent.style.transitionDuration = null;
-        _this.parent.style.transform = 'translateY(0)';
-        setTimeout(function () {
-          _this.setAnimationDuration(_this.duration);
-        }, 30);
-      }, 30);
-    }, 30);
+    this.refreshPageToTop();
   }
 
   _createClass(MyFullPage, [{
@@ -369,6 +360,23 @@ var MyFullPage = /*#__PURE__*/function () {
       this.spinValue = sectionNumber;
       this.scrollContent();
     }
+  }, {
+    key: "refreshPageToTop",
+    value: function refreshPageToTop() {
+      setTimeout(function () {
+        window.scrollTo(0, 0);
+      }, 40); // setTimeout(() => {
+      //   this.parent.style.transitionDuration = null;
+      //   this.parent.style.transform = `translateY(-${this.sections.length * 100}vh)`;
+      //   setTimeout(() => {
+      //     this.parent.style.transitionDuration = null;
+      //     this.parent.style.transform = 'translateY(0)';
+      //     setTimeout(() => {
+      //       this.setAnimationDuration(this.duration);
+      //     }, 30);
+      //   }, 30);
+      // }, 30);
+    }
   }]);
 
   return MyFullPage;
@@ -416,7 +424,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52867" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61793" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
