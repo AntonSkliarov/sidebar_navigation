@@ -26,17 +26,7 @@ class MyFullPage {
 
     this.prevTime = new Date().getTime();
 
-    setTimeout(() => {
-      this.parent.style.transitionDuration = null;
-      this.parent.style.transform = `translateY(-${this.sections.length * 100}vh)`;
-      setTimeout(() => {
-        this.parent.style.transitionDuration = null;
-        this.parent.style.transform = 'translateY(0)';
-        setTimeout(() => {
-          this.setAnimationDuration(this.duration);
-        }, 30);
-      }, 30);
-    }, 30);
+    this.refreshPageToTop();
   }
 
   scrollContent() {
@@ -75,7 +65,8 @@ class MyFullPage {
   }
 
   wheelHandler = (event) => {
-    console.log(event.deltaY)
+    console.log(this.sections[this.spinValue].getBoundingClientRect().top)
+    console.log(document.elementFromPoint(0, 0))
 
     document.removeEventListener('wheel', this.wheelHandler);
 
@@ -176,6 +167,25 @@ class MyFullPage {
   goTo(sectionNumber) {
     this.spinValue = sectionNumber;
     this.scrollContent();
+  }
+
+  refreshPageToTop() {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 40)
+
+
+    // setTimeout(() => {
+    //   this.parent.style.transitionDuration = null;
+    //   this.parent.style.transform = `translateY(-${this.sections.length * 100}vh)`;
+    //   setTimeout(() => {
+    //     this.parent.style.transitionDuration = null;
+    //     this.parent.style.transform = 'translateY(0)';
+    //     setTimeout(() => {
+    //       this.setAnimationDuration(this.duration);
+    //     }, 30);
+    //   }, 30);
+    // }, 30);
   }
 }
 
