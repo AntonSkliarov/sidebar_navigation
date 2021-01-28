@@ -205,8 +205,24 @@ var MyFullPage = /*#__PURE__*/function () {
     _classCallCheck(this, MyFullPage);
 
     _defineProperty(this, "wheelHandler", function (event) {
-      console.log(_this.sections[_this.spinValue].getBoundingClientRect().top);
-      console.log(document.elementFromPoint(0, 0));
+      // console.log(this.sections[this.spinValue].getBoundingClientRect().top)
+      // console.log(document.elementFromPoint(0, 0))
+      var debounce = function debounce(func, delay) {
+        return function () {
+          var _this2 = this;
+
+          if (this.canScroll) {
+            return;
+          }
+
+          func.apply(this, arguments);
+          this.canScroll = true;
+          setTimeout(function () {
+            return _this2.canScroll = false;
+          }, delay);
+        };
+      };
+
       document.removeEventListener('wheel', _this.wheelHandler); // const curTime = new Date().getTime();
       // const timeDiff = curTime - this.prevTime;
       // this.prevTime = curTime;
@@ -224,7 +240,7 @@ var MyFullPage = /*#__PURE__*/function () {
         _this.spinValue -= _this.spinValue > 0 ? 1 : 0;
       }
 
-      _this.scrollContent();
+      debounce(_this.scrollContent(), _this.duration); // this.scrollContent();
 
       setTimeout(function () {
         document.addEventListener('wheel', _this.wheelHandler);
@@ -240,7 +256,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.dots = config.dots || false;
     this.sectionNavigation = '';
     this.startY = undefined;
-    this.canScroll = true;
+    this.canScroll = false;
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
     this.prevTime = new Date().getTime();
@@ -250,7 +266,7 @@ var MyFullPage = /*#__PURE__*/function () {
   _createClass(MyFullPage, [{
     key: "scrollContent",
     value: function scrollContent() {
-      var _this2 = this;
+      var _this3 = this;
 
       // this.canScroll = true;
       if (this.onStart) {
@@ -265,7 +281,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       if (this.onEnd) {
         setTimeout(function () {
-          _this2.onEnd();
+          _this3.onEnd();
         }, this.duration);
       }
     }
@@ -289,11 +305,11 @@ var MyFullPage = /*#__PURE__*/function () {
   }, {
     key: "initializeScroll",
     value: function initializeScroll() {
-      var _this3 = this;
+      var _this4 = this;
 
       document.addEventListener('wheel', this.wheelHandler);
       document.addEventListener('touchstart', function (event) {
-        _this3.startY = event.touches[0].pageY;
+        _this4.startY = event.touches[0].pageY;
       });
 
       var handleTouchEnd = _functions.default.throttle(this.touchEnd, this, this.duration);
@@ -313,7 +329,7 @@ var MyFullPage = /*#__PURE__*/function () {
   }, {
     key: "generateNavigation",
     value: function generateNavigation() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (!this.dots) {
         return;
@@ -321,7 +337,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        _this4.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
+        _this5.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
       this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
@@ -331,9 +347,9 @@ var MyFullPage = /*#__PURE__*/function () {
           _functions.default.removeActiveClass();
 
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this4.spinValue = index;
+          _this5.spinValue = index;
 
-          _this4.scrollContent();
+          _this5.scrollContent();
         });
       });
     }
@@ -365,17 +381,7 @@ var MyFullPage = /*#__PURE__*/function () {
     value: function refreshPageToTop() {
       setTimeout(function () {
         window.scrollTo(0, 0);
-      }, 40); // setTimeout(() => {
-      //   this.parent.style.transitionDuration = null;
-      //   this.parent.style.transform = `translateY(-${this.sections.length * 100}vh)`;
-      //   setTimeout(() => {
-      //     this.parent.style.transitionDuration = null;
-      //     this.parent.style.transform = 'translateY(0)';
-      //     setTimeout(() => {
-      //       this.setAnimationDuration(this.duration);
-      //     }, 30);
-      //   }, 30);
-      // }, 30);
+      }, 40);
     }
   }]);
 
@@ -424,7 +430,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61793" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58195" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

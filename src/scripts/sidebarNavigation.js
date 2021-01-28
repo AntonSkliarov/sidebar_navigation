@@ -19,7 +19,7 @@ class MyFullPage {
     this.dots = config.dots || false;
     this.sectionNavigation = '';
     this.startY = undefined;
-    this.canScroll = true;
+    this.canScroll = false;
 
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
@@ -65,8 +65,22 @@ class MyFullPage {
   }
 
   wheelHandler = (event) => {
-    console.log(this.sections[this.spinValue].getBoundingClientRect().top)
-    console.log(document.elementFromPoint(0, 0))
+    // console.log(this.sections[this.spinValue].getBoundingClientRect().top)
+    // console.log(document.elementFromPoint(0, 0))
+    const debounce = (func, delay) => {
+
+      return function() {
+        if (this.canScroll) {
+          return;
+        }
+
+        func.apply(this, arguments);
+
+        this.canScroll = true;
+
+        setTimeout(() => this.canScroll = false, delay);
+      };
+    };
 
     document.removeEventListener('wheel', this.wheelHandler);
 
@@ -91,7 +105,8 @@ class MyFullPage {
       this.spinValue -= this.spinValue > 0 ? 1 : 0;
     }
 
-    this.scrollContent();
+    debounce(this.scrollContent(), this.duration);
+    // this.scrollContent();
 
     setTimeout(() => {
       document.addEventListener('wheel', this.wheelHandler);
@@ -173,19 +188,6 @@ class MyFullPage {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 40)
-
-
-    // setTimeout(() => {
-    //   this.parent.style.transitionDuration = null;
-    //   this.parent.style.transform = `translateY(-${this.sections.length * 100}vh)`;
-    //   setTimeout(() => {
-    //     this.parent.style.transitionDuration = null;
-    //     this.parent.style.transform = 'translateY(0)';
-    //     setTimeout(() => {
-    //       this.setAnimationDuration(this.duration);
-    //     }, 30);
-    //   }, 30);
-    // }, 30);
   }
 }
 
