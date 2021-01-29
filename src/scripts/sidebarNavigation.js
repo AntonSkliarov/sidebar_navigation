@@ -79,7 +79,6 @@ class MyFullPage {
   }
 
   initializeScroll() {
-
     document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {

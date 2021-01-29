@@ -137,8 +137,7 @@ var DOM = {
   sidebarNav: "<div class=\"".concat(CLASSES.sidebarNav, "\"></div>")
 };
 exports.DOM = DOM;
-var VIEWPORT_HEIGHT = 100; // export const DEFAULT_DURATION = 500;
-
+var VIEWPORT_HEIGHT = 100;
 exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
 },{}],"helpers/_functions.js":[function(require,module,exports) {
 "use strict";
@@ -217,8 +216,8 @@ var MyFullPage = /*#__PURE__*/function () {
       end: null
     };
     this.sectionNavigation = '';
-    this.init();
-    this.parent = config.parent || _consts.DOM.parent; // old
+    this.parent = config.parent || _consts.DOM.parent;
+    this.init(); // old
     // this.parent = config.parent || DOM.parent;
     // this.spinValue = config.spinValue || 0; // currentPage
     // this.sectionNavigation = '';
@@ -236,6 +235,7 @@ var MyFullPage = /*#__PURE__*/function () {
       this.refreshPageToTop();
       this.setSideNavigation();
       this.addScrollListener();
+      this.setAnimationDuration(this.duration);
     }
   }, {
     key: "refreshPageToTop",
@@ -243,6 +243,12 @@ var MyFullPage = /*#__PURE__*/function () {
       setTimeout(function () {
         window.scrollTo(0, 0);
       }, 40);
+    }
+  }, {
+    key: "setAnimationDuration",
+    value: function setAnimationDuration(duration) {
+      console.log(this.parent);
+      this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
     }
   }, {
     key: "setSideNavigation",
@@ -395,7 +401,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58329" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62308" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
