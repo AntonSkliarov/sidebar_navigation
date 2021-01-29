@@ -209,8 +209,8 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sectionNavigation = '';
     this.startY = undefined;
     this.initializeScroll();
-    this.setAnimationDuration(this.duration);
-    this.prevTime = new Date().getTime();
+    this.setAnimationDuration(this.duration); // this.prevTime = new Date().getTime();
+
     this.refreshPageToTop();
   }
 
@@ -288,11 +288,11 @@ var MyFullPage = /*#__PURE__*/function () {
       };
 
       var scrollHandler = function scrollHandler(event) {
-        _this2.currentTime = new Date().getTime();
-
-        if (_this2.currentTime - _this2.prevTime < 1000) {
-          return;
-        }
+        // this.currentTime = new Date().getTime();
+        // if ((this.currentTime - this.prevTime) < 1000) {
+        //   return;
+        // }
+        document.removeEventListener('wheel', throttledScrollHandler);
 
         if (event.deltaY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
@@ -300,14 +300,18 @@ var MyFullPage = /*#__PURE__*/function () {
           _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
         }
 
-        _this2.scrollContent();
+        _this2.scrollContent(); // setTimeout(() => {
+        //   this.prevTime = new Date().getTime();
+        // }, 500);
+
 
         setTimeout(function () {
-          _this2.prevTime = new Date().getTime();
-        }, 500);
+          document.addEventListener('wheel', throttledScrollHandler);
+        }, _this2.duration);
       };
 
-      document.addEventListener('wheel', throttle(scrollHandler, this.duration)); // document.addEventListener('wheel', this.wheelHandler);
+      var throttledScrollHandler = throttle(scrollHandler, this.duration);
+      document.addEventListener('wheel', throttledScrollHandler); // document.addEventListener('wheel', this.wheelHandler);
 
       document.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
@@ -431,7 +435,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65345" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50317" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

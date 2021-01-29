@@ -24,7 +24,7 @@ class MyFullPage {
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
 
-    this.prevTime = new Date().getTime();
+    // this.prevTime = new Date().getTime();
 
     this.refreshPageToTop();
   }
@@ -99,11 +99,13 @@ class MyFullPage {
     };
 
     const scrollHandler = (event) => {
-      this.currentTime = new Date().getTime();
+      // this.currentTime = new Date().getTime();
 
-      if ((this.currentTime - this.prevTime) < 1000) {
-        return;
-      }
+      // if ((this.currentTime - this.prevTime) < 1000) {
+      //   return;
+      // }
+
+      document.removeEventListener('wheel', throttledScrollHandler);
 
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
@@ -113,12 +115,18 @@ class MyFullPage {
 
       this.scrollContent();
 
+      // setTimeout(() => {
+      //   this.prevTime = new Date().getTime();
+      // }, 500);
+
       setTimeout(() => {
-        this.prevTime = new Date().getTime();
-      }, 500);
+        document.addEventListener('wheel', throttledScrollHandler);
+      }, this.duration);
     };
 
-    document.addEventListener('wheel', throttle(scrollHandler, this.duration));
+    const throttledScrollHandler = throttle(scrollHandler, this.duration);
+
+    document.addEventListener('wheel', throttledScrollHandler);
     // document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {
