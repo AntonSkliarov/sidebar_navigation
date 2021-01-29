@@ -194,13 +194,9 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var MyFullPage = /*#__PURE__*/function () {
   function MyFullPage(config) {
     _classCallCheck(this, MyFullPage);
-
-    _defineProperty(this, "l", void 0);
 
     this.sections = config.sections || _consts.DOM.sections; // this.pages
 
@@ -247,7 +243,6 @@ var MyFullPage = /*#__PURE__*/function () {
   }, {
     key: "setAnimationDuration",
     value: function setAnimationDuration(duration) {
-      console.log(this.parent);
       this.parent.style.transition = "transform ".concat(duration, "ms ease-out");
     }
   }, {
@@ -273,40 +268,25 @@ var MyFullPage = /*#__PURE__*/function () {
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
           _this.currentPage = index;
 
-          _this.scrollContent();
+          _this.goto();
         });
       });
-    }
-  }, {
-    key: "debounceFunction",
-    value: function debounceFunction(f, ms) {
-      return function () {
-        var _this2 = this;
+    } // debounceFunction(f, ms) {
+    //   return function () {
+    //     if (!this.animationFinished) {
+    //       return;
+    //     }
+    //     f.apply(this, arguments);
+    //     this.animationFinished = false;
+    //     setTimeout(() => this.animationFinished = true, ms);
+    //   };
+    // }
 
-        if (!this.animationFinished) return;
-        f.apply(this, arguments);
-        this.animationFinished = false;
-        setTimeout(function () {
-          return _this2.animationFinished = true;
-        }, ms);
-      };
-    }
   }, {
     key: "goto",
     value: function goto() {
-      var _this3 = this;
+      var _this2 = this;
 
-      // let numberOfPage = num;
-      // if (num >= this.amountOfPages) {
-      //   numberOfPage = this.amountOfPages - 1;
-      // } else if (num < 0) {
-      //   numberOfPage = 0;
-      // }
-      // gsap.to('body', { position: 'relative', top: -100 * numberOfPage + 'vh', duration: this.duration });
-      // if (this.dots) {
-      //   this.changeActiveButton(numberOfPage);
-      // }
-      // this.currentPage = numberOfPage;
       if (this.onStart) {
         this.onStart();
       }
@@ -319,41 +299,41 @@ var MyFullPage = /*#__PURE__*/function () {
 
       if (this.onEnd) {
         setTimeout(function () {
-          _this3.onEnd();
+          _this2.onEnd();
         }, this.duration);
       }
     }
   }, {
     key: "addScrollListener",
     value: function addScrollListener() {
-      var _this4 = this;
+      var _this3 = this;
 
       window.addEventListener('mousewheel', function (event) {
-        if (!_this4.animationFinished) {
+        if (!_this3.animationFinished) {
           return;
         }
 
-        if (_this4.callback.start) {
-          _this4.callback.start();
+        if (_this3.callback.start) {
+          _this3.callback.start();
         }
 
         if (event.deltaY > 0) {
-          _this4.currentPage += _this4.currentPage < _this4.sections.length - 1 ? 1 : 0;
+          _this3.currentPage += _this3.currentPage < _this3.sections.length - 1 ? 1 : 0;
         } else {
-          _this4.currentPage -= _this4.currentPage > 0 ? 1 : 0;
-        }
+          _this3.currentPage -= _this3.currentPage > 0 ? 1 : 0;
+        } // this.debounce = this.debounceFunction(() => {
+        //   this.goto();
+        // }, this.duration);
+        // this.debounce();
 
-        _this4.debounce = _this4.debounceFunction(function () {
-          _this4.goto();
-        }, _this4.duration);
 
-        _this4.debounce();
+        _this3.goto();
 
         setTimeout(function () {
-          if (_this4.callback.end) {
-            _this4.callback.end();
+          if (_this3.callback.end) {
+            _this3.callback.end();
           }
-        }, _this4.duration);
+        }, _this3.duration);
       });
     }
   }, {
@@ -401,7 +381,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62308" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63337" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
