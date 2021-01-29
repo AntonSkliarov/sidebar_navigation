@@ -1,8 +1,9 @@
+'use-strict';
+
 import {
   CLASSES,
   DOM,
   VIEWPORT_HEIGHT,
-  DEFAULT_DURATION,
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
@@ -11,7 +12,7 @@ import FUNC from '../helpers/_functions';
 class MyFullPage {
   constructor(config) {
     this.sections = config.sections || DOM.sections;
-    this.duration = config.duration || DEFAULT_DURATION;
+    this.duration = config.duration || 500;
     this.parent = config.parent || DOM.parent;
     this.spinValue = config.spinValue || 0;
     this.onEnd = config.onEnd || null;
@@ -19,7 +20,6 @@ class MyFullPage {
     this.dots = config.dots || false;
     this.sectionNavigation = '';
     this.startY = undefined;
-    this.canScroll = false;
 
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
@@ -30,8 +30,6 @@ class MyFullPage {
   }
 
   scrollContent() {
-    // this.canScroll = true;
-
     if (this.onStart) {
       this.onStart();
     }
@@ -65,39 +63,7 @@ class MyFullPage {
   }
 
   wheelHandler = (event) => {
-    // console.log(this.sections[this.spinValue].getBoundingClientRect().top)
-    // console.log(document.elementFromPoint(0, 0))
-    const debounce = (func, delay) => {
-
-      return function() {
-        if (this.canScroll) {
-          return;
-        }
-
-        func.apply(this, arguments);
-
-        this.canScroll = true;
-
-        setTimeout(() => this.canScroll = false, delay);
-      };
-    };
-
     document.removeEventListener('wheel', this.wheelHandler);
-
-    // const curTime = new Date().getTime();
-
-    // const timeDiff = curTime - this.prevTime;
-    // this.prevTime = curTime;
-
-    // if (!this.canScroll) {
-    //   return;
-    // }
-
-    // if (timeDiff < 300) {
-    //   return;
-    // }
-
-    // this.canScroll = false;
 
     if (event.deltaY > 0) {
       this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
@@ -105,8 +71,7 @@ class MyFullPage {
       this.spinValue -= this.spinValue > 0 ? 1 : 0;
     }
 
-    debounce(this.scrollContent(), this.duration);
-    // this.scrollContent();
+    this.scrollContent();
 
     setTimeout(() => {
       document.addEventListener('wheel', this.wheelHandler);
@@ -114,6 +79,7 @@ class MyFullPage {
   }
 
   initializeScroll() {
+
     document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {

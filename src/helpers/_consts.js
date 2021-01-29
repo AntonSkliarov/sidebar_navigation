@@ -12,4 +12,3 @@ export const DOM = {
 };
 
 export const VIEWPORT_HEIGHT = 100;
-export const DEFAULT_DURATION = 500;
