@@ -304,7 +304,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
         setTimeout(function () {
           _this2.prevTime = new Date().getTime();
-        }, 1000);
+        }, 10);
       };
 
       document.addEventListener('wheel', throttle(scrollHandler, this.duration)); // document.addEventListener('wheel', this.wheelHandler);
@@ -431,7 +431,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63950" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64976" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

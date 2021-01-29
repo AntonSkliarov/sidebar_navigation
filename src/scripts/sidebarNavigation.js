@@ -115,7 +115,7 @@ class MyFullPage {
 
       setTimeout(() => {
         this.prevTime = new Date().getTime();
-      }, 1000);
+      }, 10);
     };
 
     document.addEventListener('wheel', throttle(scrollHandler, this.duration));
