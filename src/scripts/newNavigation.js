@@ -56,7 +56,6 @@ class MyFullPage {
   }
 
   setAnimationDuration(duration) {
-    console.log(this.parent);
     this.parent.style.transition = `transform ${duration}ms ease-out`;
   }
 
@@ -87,37 +86,25 @@ class MyFullPage {
         button.classList.add(CLASSES.sidebarNavButtonActive);
 
         this.currentPage = index;
-        this.scrollContent();
+        this.goto();
       });
     });
   }
 
-  debounceFunction(f, ms) {
-    return function () {
-      if (!this.animationFinished) return;
-      f.apply(this, arguments);
+  // debounceFunction(f, ms) {
+  //   return function () {
 
-      this.animationFinished = false;
-      setTimeout(() => this.animationFinished = true, ms);
-    };
-  }
-l
+  //     if (!this.animationFinished) {
+  //       return;
+  //     }
+
+  //     f.apply(this, arguments);
+  //     this.animationFinished = false;
+  //     setTimeout(() => this.animationFinished = true, ms);
+  //   };
+  // }
+
   goto() {
-    // let numberOfPage = num;
-
-    // if (num >= this.amountOfPages) {
-    //   numberOfPage = this.amountOfPages - 1;
-    // } else if (num < 0) {
-    //   numberOfPage = 0;
-    // }
-
-    // gsap.to('body', { position: 'relative', top: -100 * numberOfPage + 'vh', duration: this.duration });
-
-    // if (this.dots) {
-    //   this.changeActiveButton(numberOfPage);
-    // }
-    // this.currentPage = numberOfPage;
-
     if (this.onStart) {
       this.onStart();
     }
@@ -151,11 +138,13 @@ l
         this.currentPage -= this.currentPage > 0 ? 1 : 0;
       }
 
-      this.debounce = this.debounceFunction(() => {
-        this.goto();
-      }, this.duration);
+      // this.debounce = this.debounceFunction(() => {
+      //   this.goto();
+      // }, this.duration);
 
-      this.debounce();
+      // this.debounce();
+
+      this.goto();
 
       setTimeout(() => {
         if (this.callback.end) {

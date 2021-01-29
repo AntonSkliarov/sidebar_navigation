@@ -194,30 +194,10 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 // const debounce = require('debounce');
 var MyFullPage = /*#__PURE__*/function () {
   function MyFullPage(config) {
-    var _this = this;
-
     _classCallCheck(this, MyFullPage);
-
-    _defineProperty(this, "wheelHandler", function (event) {
-      document.removeEventListener('wheel', _this.wheelHandler);
-
-      if (event.deltaY > 0) {
-        _this.spinValue += _this.spinValue < _this.sections.length - 1 ? 1 : 0;
-      } else {
-        _this.spinValue -= _this.spinValue > 0 ? 1 : 0;
-      }
-
-      _this.scrollContent();
-
-      setTimeout(function () {
-        document.addEventListener('wheel', _this.wheelHandler);
-      }, _this.duration);
-    });
 
     this.sections = config.sections || _consts.DOM.sections;
     this.duration = config.duration || 500;
@@ -237,7 +217,7 @@ var MyFullPage = /*#__PURE__*/function () {
   _createClass(MyFullPage, [{
     key: "scrollContent",
     value: function scrollContent() {
-      var _this2 = this;
+      var _this = this;
 
       if (this.onStart) {
         this.onStart();
@@ -251,7 +231,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       if (this.onEnd) {
         setTimeout(function () {
-          _this2.onEnd();
+          _this.onEnd();
         }, this.duration);
       }
     }
@@ -271,15 +251,66 @@ var MyFullPage = /*#__PURE__*/function () {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
         this.scrollContent();
       }
-    }
+    } // wheelHandler = (event) => {
+    //   document.removeEventListener('wheel', this.wheelHandler);
+    //   if (event.deltaY > 0) {
+    //     this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+    //   } else {
+    //     this.spinValue -= this.spinValue > 0 ? 1 : 0;
+    //   }
+    //   this.scrollContent();
+    //   setTimeout(() => {
+    //     document.addEventListener('wheel', this.wheelHandler);
+    //   }, this.duration)
+    // }
+
   }, {
     key: "initializeScroll",
     value: function initializeScroll() {
-      var _this3 = this;
+      var _this2 = this;
 
-      document.addEventListener('wheel', this.wheelHandler);
+      var throttle = function throttle(func, delay) {
+        var isThrottle = false;
+
+        var wrapper = function wrapper() {
+          if (isThrottle) {
+            return;
+          }
+
+          func.apply(void 0, arguments);
+          isThrottle = true;
+          setTimeout(function () {
+            isThrottle = false;
+          }, delay);
+        };
+
+        return wrapper;
+      };
+
+      var scrollHandler = function scrollHandler(event) {
+        _this2.currentTime = new Date().getTime();
+
+        if (_this2.currentTime - _this2.prevTime < 1000) {
+          return;
+        }
+
+        if (event.deltaY > 0) {
+          _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
+        } else {
+          _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
+        }
+
+        _this2.scrollContent();
+
+        setTimeout(function () {
+          _this2.prevTime = new Date().getTime();
+        }, 1000);
+      };
+
+      document.addEventListener('wheel', throttle(scrollHandler, this.duration)); // document.addEventListener('wheel', this.wheelHandler);
+
       document.addEventListener('touchstart', function (event) {
-        _this3.startY = event.touches[0].pageY;
+        _this2.startY = event.touches[0].pageY;
       });
 
       var handleTouchEnd = _functions.default.throttle(this.touchEnd, this, this.duration);
@@ -299,7 +330,7 @@ var MyFullPage = /*#__PURE__*/function () {
   }, {
     key: "generateNavigation",
     value: function generateNavigation() {
-      var _this4 = this;
+      var _this3 = this;
 
       if (!this.dots) {
         return;
@@ -307,7 +338,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
       document.body.insertAdjacentHTML('beforeEnd', _consts.DOM.sidebarNav);
       this.sections.forEach(function (section) {
-        _this4.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
+        _this3.sectionNavigation += "\n        <div class=\"".concat(_consts.CLASSES.sidebarNavButton, "\">\n          <span class=\"").concat(_consts.CLASSES.sidebarNavItem, "\">\n          ").concat(section.dataset.target, "\n          </span>\n        </div>\n      ");
       });
       document.querySelector(".".concat(_consts.CLASSES.sidebarNav)).innerHTML = this.sectionNavigation;
       this.buttons = document.querySelectorAll(".".concat(_consts.CLASSES.sidebarNavButton));
@@ -317,9 +348,9 @@ var MyFullPage = /*#__PURE__*/function () {
           _functions.default.removeActiveClass();
 
           button.classList.add(_consts.CLASSES.sidebarNavButtonActive);
-          _this4.spinValue = index;
+          _this3.spinValue = index;
 
-          _this4.scrollContent();
+          _this3.scrollContent();
         });
       });
     }
@@ -400,7 +431,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62308" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63950" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

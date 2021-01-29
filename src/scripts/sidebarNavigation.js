@@ -62,24 +62,64 @@ class MyFullPage {
     }
   }
 
-  wheelHandler = (event) => {
-    document.removeEventListener('wheel', this.wheelHandler);
+  // wheelHandler = (event) => {
+  //   document.removeEventListener('wheel', this.wheelHandler);
 
-    if (event.deltaY > 0) {
-      this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-    } else {
-      this.spinValue -= this.spinValue > 0 ? 1 : 0;
-    }
+  //   if (event.deltaY > 0) {
+  //     this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+  //   } else {
+  //     this.spinValue -= this.spinValue > 0 ? 1 : 0;
+  //   }
 
-    this.scrollContent();
+  //   this.scrollContent();
 
-    setTimeout(() => {
-      document.addEventListener('wheel', this.wheelHandler);
-    }, this.duration)
-  }
+  //   setTimeout(() => {
+  //     document.addEventListener('wheel', this.wheelHandler);
+  //   }, this.duration)
+  // }
 
   initializeScroll() {
-    document.addEventListener('wheel', this.wheelHandler);
+    const throttle = (func, delay) => {
+      let isThrottle = false;
+
+      const wrapper = (...args) => {
+        if (isThrottle) {
+          return;
+        }
+
+        func(...args);
+
+        isThrottle = true;
+        setTimeout(() => {
+          isThrottle = false;
+        }, delay);
+      };
+
+      return wrapper;
+    };
+
+    const scrollHandler = (event) => {
+      this.currentTime = new Date().getTime();
+
+      if ((this.currentTime - this.prevTime) < 1000) {
+        return;
+      }
+
+      if (event.deltaY > 0) {
+        this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
+      } else {
+        this.spinValue -= this.spinValue > 0 ? 1 : 0;
+      }
+
+      this.scrollContent();
+
+      setTimeout(() => {
+        this.prevTime = new Date().getTime();
+      }, 1000);
+    };
+
+    document.addEventListener('wheel', throttle(scrollHandler, this.duration));
+    // document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
