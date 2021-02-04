@@ -209,8 +209,7 @@ var MyFullPage = /*#__PURE__*/function () {
     this.sectionNavigation = '';
     this.startY = undefined;
     this.initializeScroll();
-    this.setAnimationDuration(this.duration); // this.prevTime = new Date().getTime();
-
+    this.setAnimationDuration(this.duration);
     this.refreshPageToTop();
   }
 
@@ -251,19 +250,7 @@ var MyFullPage = /*#__PURE__*/function () {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
         this.scrollContent();
       }
-    } // wheelHandler = (event) => {
-    //   document.removeEventListener('wheel', this.wheelHandler);
-    //   if (event.deltaY > 0) {
-    //     this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-    //   } else {
-    //     this.spinValue -= this.spinValue > 0 ? 1 : 0;
-    //   }
-    //   this.scrollContent();
-    //   setTimeout(() => {
-    //     document.addEventListener('wheel', this.wheelHandler);
-    //   }, this.duration)
-    // }
-
+    }
   }, {
     key: "initializeScroll",
     value: function initializeScroll() {
@@ -287,11 +274,7 @@ var MyFullPage = /*#__PURE__*/function () {
         return wrapper;
       };
 
-      var scrollHandler = function scrollHandler(event) {
-        // this.currentTime = new Date().getTime();
-        // if ((this.currentTime - this.prevTime) < 1000) {
-        //   return;
-        // }
+      var wheelHandler = function wheelHandler(event) {
         document.removeEventListener('wheel', throttledScrollHandler);
 
         if (event.deltaY > 0) {
@@ -300,19 +283,15 @@ var MyFullPage = /*#__PURE__*/function () {
           _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
         }
 
-        _this2.scrollContent(); // setTimeout(() => {
-        //   this.prevTime = new Date().getTime();
-        // }, 500);
-
+        _this2.scrollContent();
 
         setTimeout(function () {
           document.addEventListener('wheel', throttledScrollHandler);
         }, _this2.duration);
       };
 
-      var throttledScrollHandler = throttle(scrollHandler, this.duration);
-      document.addEventListener('wheel', throttledScrollHandler); // document.addEventListener('wheel', this.wheelHandler);
-
+      var throttledScrollHandler = throttle(wheelHandler, this.duration);
+      document.addEventListener('wheel', throttledScrollHandler);
       document.addEventListener('touchstart', function (event) {
         _this2.startY = event.touches[0].pageY;
       });
@@ -435,7 +414,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50317" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51388" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
