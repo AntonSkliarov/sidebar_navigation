@@ -24,8 +24,6 @@ class MyFullPage {
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
 
-    // this.prevTime = new Date().getTime();
-
     this.refreshPageToTop();
   }
 
@@ -62,22 +60,6 @@ class MyFullPage {
     }
   }
 
-  // wheelHandler = (event) => {
-  //   document.removeEventListener('wheel', this.wheelHandler);
-
-  //   if (event.deltaY > 0) {
-  //     this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
-  //   } else {
-  //     this.spinValue -= this.spinValue > 0 ? 1 : 0;
-  //   }
-
-  //   this.scrollContent();
-
-  //   setTimeout(() => {
-  //     document.addEventListener('wheel', this.wheelHandler);
-  //   }, this.duration)
-  // }
-
   initializeScroll() {
     const throttle = (func, delay) => {
       let isThrottle = false;
@@ -98,13 +80,7 @@ class MyFullPage {
       return wrapper;
     };
 
-    const scrollHandler = (event) => {
-      // this.currentTime = new Date().getTime();
-
-      // if ((this.currentTime - this.prevTime) < 1000) {
-      //   return;
-      // }
-
+    const wheelHandler = (event) => {
       document.removeEventListener('wheel', throttledScrollHandler);
 
       if (event.deltaY > 0) {
@@ -115,19 +91,14 @@ class MyFullPage {
 
       this.scrollContent();
 
-      // setTimeout(() => {
-      //   this.prevTime = new Date().getTime();
-      // }, 500);
-
       setTimeout(() => {
         document.addEventListener('wheel', throttledScrollHandler);
       }, this.duration);
     };
 
-    const throttledScrollHandler = throttle(scrollHandler, this.duration);
+    const throttledScrollHandler = throttle(wheelHandler, this.duration);
 
     document.addEventListener('wheel', throttledScrollHandler);
-    // document.addEventListener('wheel', this.wheelHandler);
 
     document.addEventListener('touchstart', (event) => {
       this.startY = event.touches[0].pageY;
