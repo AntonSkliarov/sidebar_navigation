@@ -1,9 +1,12 @@
 'use-strict';
 
+import normalizeWheel from 'normalize-wheel';
+
 import {
   CLASSES,
   DOM,
   VIEWPORT_HEIGHT,
+  FULLPAGE_SCROLL_DELAY
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
@@ -12,14 +15,14 @@ import FUNC from '../helpers/_functions';
 class MyFullPage {
   constructor(config) {
     this.sections = config.sections || DOM.sections;
-    this.duration = config.duration || 500;
+    this.duration = config.duration || 700;
     this.parent = config.parent || DOM.parent;
     this.spinValue = config.spinValue || 0;
     this.onEnd = config.onEnd || null;
     this.onStart = config.onStart || null;
     this.dots = config.dots || false;
     this.sectionNavigation = '';
-    this.startY = undefined;
+    this.startY = true;
 
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
@@ -81,35 +84,34 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
-      document.removeEventListener('wheel', throttledScrollHandler);
+      const normalized = normalizeWheel(event);
 
-      if (event.deltaY > 0) {
+      console.log('normalized wheel event: ', normalized);
+
+      document.removeEventListener('mousewheel', wheelHandler);
+
+
+      // if (!this.startY) return
+      if (normalized.pixelY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
       }
 
+      // this.startY = false;
       this.scrollContent();
 
+      // setTimeout(() => {
+      //   this.startY = true;
+      // }, this.duration + FULLPAGE_SCROLL_DELAY)
+
       setTimeout(() => {
-        document.addEventListener('wheel', throttledScrollHandler);
+        document.addEventListener('mousewheel', wheelHandler);
       }, this.duration);
     };
 
-    const throttledScrollHandler = throttle(wheelHandler, this.duration);
 
-    document.addEventListener('wheel', throttledScrollHandler);
-
-    document.addEventListener('touchstart', (event) => {
-      this.startY = event.touches[0].pageY;
-    });
-
-    const handleTouchEnd = FUNC.throttle(this.touchEnd, this, this.duration);
-
-    document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchmove', (event) => {
-      event.preventDefault();
-    }, { passive: false });
+    document.addEventListener('mousewheel', wheelHandler);
   }
 
   setAnimationDuration(duration) {
@@ -177,7 +179,7 @@ class MyFullPage {
 
 const config = {
   sections: null,
-  duration: 1000,
+  duration: 700,
   parent: null,
   spinValue: null,
   onEnd: null,
@@ -187,6 +189,6 @@ const config = {
 
 const newNavigation = new MyFullPage(config);
 newNavigation.generateNavigation();
-newNavigation.on('end', FUNC.runAtEnd);
-newNavigation.on('start', FUNC.runAtStart);
-newNavigation.goTo(0);
+// newNavigation.on('end', FUNC.runAtEnd);
+// newNavigation.on('start', FUNC.runAtStart);
+// newNavigation.goTo(0);

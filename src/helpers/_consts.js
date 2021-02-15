@@ -12,3 +12,4 @@ export const DOM = {
 };
 
 export const VIEWPORT_HEIGHT = 100;
+export const FULLPAGE_SCROLL_DELAY = 700;
