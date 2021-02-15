@@ -1,5 +1,7 @@
 'use-strict';
 
+import normalizeWheel from 'normalize-wheel';
+
 import {
   CLASSES,
   DOM,
@@ -82,8 +84,11 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
+      const normalized = normalizeWheel(event);
+      console.log('normalized wheel event: ', normalized);
+
       if (!this.startY) return
-      if (event.deltaY > 0) {
+      if (normalized.pixelY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
@@ -179,5 +184,3 @@ newNavigation.generateNavigation();
 // newNavigation.on('end', FUNC.runAtEnd);
 // newNavigation.on('start', FUNC.runAtStart);
 // newNavigation.goTo(0);
-
-console.log('15/02/2021 version');
