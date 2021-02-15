@@ -3,7 +3,8 @@
 import {
   CLASSES,
   DOM,
-  VIEWPORT_HEIGHT
+  VIEWPORT_HEIGHT,
+  FULLPAGE_SCROLL_DELAY
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
@@ -12,7 +13,7 @@ import FUNC from '../helpers/_functions';
 class MyFullPage {
   constructor(config) {
     this.sections = config.sections || DOM.sections;
-    this.duration = config.duration || 500;
+    this.duration = config.duration || 700;
     this.parent = config.parent || DOM.parent;
     this.spinValue = config.spinValue || 0;
     this.onEnd = config.onEnd || null;
@@ -93,8 +94,7 @@ class MyFullPage {
 
       setTimeout(() => {
         this.startY = true;
-      }, this.duration)
-
+      }, this.duration + FULLPAGE_SCROLL_DELAY)
     };
 
 
@@ -166,7 +166,7 @@ class MyFullPage {
 
 const config = {
   sections: null,
-  duration: 1000,
+  duration: 700,
   parent: null,
   spinValue: null,
   onEnd: null,
@@ -179,3 +179,5 @@ newNavigation.generateNavigation();
 // newNavigation.on('end', FUNC.runAtEnd);
 // newNavigation.on('start', FUNC.runAtStart);
 // newNavigation.goTo(0);
+
+console.log('15/02/2021 version');
