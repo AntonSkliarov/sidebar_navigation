@@ -85,21 +85,29 @@ class MyFullPage {
 
     const wheelHandler = (event) => {
       const normalized = normalizeWheel(event);
+
       console.log('normalized wheel event: ', normalized);
 
-      if (!this.startY) return
+      document.removeEventListener('mousewheel', wheelHandler);
+
+
+      // if (!this.startY) return
       if (normalized.pixelY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
       }
 
-      this.startY = false;
+      // this.startY = false;
       this.scrollContent();
 
+      // setTimeout(() => {
+      //   this.startY = true;
+      // }, this.duration + FULLPAGE_SCROLL_DELAY)
+
       setTimeout(() => {
-        this.startY = true;
-      }, this.duration + FULLPAGE_SCROLL_DELAY)
+        document.addEventListener('mousewheel', wheelHandler);
+      }, this.duration);
     };
 
 

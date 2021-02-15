@@ -861,21 +861,23 @@ var MyFullPage = /*#__PURE__*/function () {
       var wheelHandler = function wheelHandler(event) {
         var normalized = (0, _normalizeWheel.default)(event);
         console.log('normalized wheel event: ', normalized);
-        if (!_this2.startY) return;
+        document.removeEventListener('mousewheel', wheelHandler); // if (!this.startY) return
 
         if (normalized.pixelY > 0) {
           _this2.spinValue += _this2.spinValue < _this2.sections.length - 1 ? 1 : 0;
         } else {
           _this2.spinValue -= _this2.spinValue > 0 ? 1 : 0;
-        }
+        } // this.startY = false;
 
-        _this2.startY = false;
 
-        _this2.scrollContent();
+        _this2.scrollContent(); // setTimeout(() => {
+        //   this.startY = true;
+        // }, this.duration + FULLPAGE_SCROLL_DELAY)
+
 
         setTimeout(function () {
-          _this2.startY = true;
-        }, _this2.duration + _consts.FULLPAGE_SCROLL_DELAY);
+          document.addEventListener('mousewheel', wheelHandler);
+        }, _this2.duration);
       };
 
       document.addEventListener('mousewheel', wheelHandler);
@@ -988,7 +990,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55464" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56892" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
