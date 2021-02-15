@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
+exports.FULLPAGE_SCROLL_DELAY = exports.VIEWPORT_HEIGHT = exports.DOM = exports.CLASSES = void 0;
 var CLASSES = {
   sidebarNav: 'sidebar-nav',
   sidebarNavButton: 'sidebar-nav__button',
@@ -139,6 +139,8 @@ var DOM = {
 exports.DOM = DOM;
 var VIEWPORT_HEIGHT = 100;
 exports.VIEWPORT_HEIGHT = VIEWPORT_HEIGHT;
+var FULLPAGE_SCROLL_DELAY = 700;
+exports.FULLPAGE_SCROLL_DELAY = FULLPAGE_SCROLL_DELAY;
 },{}],"helpers/_functions.js":[function(require,module,exports) {
 "use strict";
 
@@ -200,7 +202,7 @@ var MyFullPage = /*#__PURE__*/function () {
     _classCallCheck(this, MyFullPage);
 
     this.sections = config.sections || _consts.DOM.sections;
-    this.duration = config.duration || 500;
+    this.duration = config.duration || 700;
     this.parent = config.parent || _consts.DOM.parent;
     this.spinValue = config.spinValue || 0;
     this.onEnd = config.onEnd || null;
@@ -289,7 +291,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
         setTimeout(function () {
           _this2.startY = true;
-        }, _this2.duration);
+        }, _this2.duration + _consts.FULLPAGE_SCROLL_DELAY);
       };
 
       document.addEventListener('mousewheel', wheelHandler);
@@ -363,7 +365,7 @@ var MyFullPage = /*#__PURE__*/function () {
 
 var config = {
   sections: null,
-  duration: 1000,
+  duration: 700,
   parent: null,
   spinValue: null,
   onEnd: null,
@@ -374,6 +376,8 @@ var newNavigation = new MyFullPage(config);
 newNavigation.generateNavigation(); // newNavigation.on('end', FUNC.runAtEnd);
 // newNavigation.on('start', FUNC.runAtStart);
 // newNavigation.goTo(0);
+
+console.log('15/02/2021 version');
 },{"../helpers/_consts":"helpers/_consts.js","../helpers/_functions":"helpers/_functions.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -402,7 +406,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55173" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55330" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
