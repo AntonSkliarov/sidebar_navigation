@@ -3,7 +3,7 @@
 import {
   CLASSES,
   DOM,
-  VIEWPORT_HEIGHT,
+  VIEWPORT_HEIGHT
 } from '../helpers/_consts';
 import FUNC from '../helpers/_functions';
 
@@ -19,7 +19,7 @@ class MyFullPage {
     this.onStart = config.onStart || null;
     this.dots = config.dots || false;
     this.sectionNavigation = '';
-    this.startY = undefined;
+    this.startY = true;
 
     this.initializeScroll();
     this.setAnimationDuration(this.duration);
@@ -81,35 +81,24 @@ class MyFullPage {
     };
 
     const wheelHandler = (event) => {
-      document.removeEventListener('wheel', throttledScrollHandler);
-
+      if (!this.startY) return
       if (event.deltaY > 0) {
         this.spinValue += this.spinValue < (this.sections.length - 1) ? 1 : 0;
       } else {
         this.spinValue -= this.spinValue > 0 ? 1 : 0;
       }
 
+      this.startY = false;
       this.scrollContent();
 
       setTimeout(() => {
-        document.addEventListener('wheel', throttledScrollHandler);
-      }, this.duration);
+        this.startY = true;
+      }, this.duration)
+
     };
 
-    const throttledScrollHandler = throttle(wheelHandler, this.duration);
 
-    document.addEventListener('wheel', throttledScrollHandler);
-
-    document.addEventListener('touchstart', (event) => {
-      this.startY = event.touches[0].pageY;
-    });
-
-    const handleTouchEnd = FUNC.throttle(this.touchEnd, this, this.duration);
-
-    document.addEventListener('touchend', handleTouchEnd);
-    document.addEventListener('touchmove', (event) => {
-      event.preventDefault();
-    }, { passive: false });
+    document.addEventListener('mousewheel', wheelHandler);
   }
 
   setAnimationDuration(duration) {
@@ -187,6 +176,6 @@ const config = {
 
 const newNavigation = new MyFullPage(config);
 newNavigation.generateNavigation();
-newNavigation.on('end', FUNC.runAtEnd);
-newNavigation.on('start', FUNC.runAtStart);
-newNavigation.goTo(0);
+// newNavigation.on('end', FUNC.runAtEnd);
+// newNavigation.on('start', FUNC.runAtStart);
+// newNavigation.goTo(0);
